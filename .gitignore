@@ -1,0 +1,13 @@
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.yaml
+
+# Arquivos de teste
+test_db.php
+
+# Banco de Dados
+init.sql
+
+# Uploads
+uploads/
