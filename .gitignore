@@ -7,7 +7,7 @@ docker-compose.yaml
 test_db.php
 
 # Banco de Dados
-database/
+database/db.php
 init.sql
 
 # Uploads
