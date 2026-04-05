@@ -1,6 +1,3 @@
-Aqui está o README.md completo e detalhado. Ele foi escrito como a documentação oficial do seu projeto, focando em explicar a arquitetura, o papel de cada arquivo e os pontos cruciais da lógica do código, sem mencionar processos anteriores.
-
-Markdown
 # RedaçãoPro
 
 O **RedaçãoPro** é uma plataforma educacional desenvolvida para conectar alunos e professores no processo de envio, correção e feedback de redações. O grande diferencial do sistema é a interface de correção interativa, que permite aos avaliadores desenhar traços livres sobre a imagem da redação e ancorar comentários detalhados baseados nas competências de avaliação.

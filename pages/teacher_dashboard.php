@@ -45,6 +45,12 @@ $firstName = explode(' ', $user['name'])[0];
                 <span class="h-4 w-px bg-slate-700"></span>
                 <span class="text-slate-400 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold hidden sm:block">Portal do Avaliador</span>
             </div>
+            
+            <div class="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
+                <button onclick="switchTeacherView('queue')" class="text-xs font-bold text-slate-300 hover:text-white transition-colors uppercase tracking-widest">Fila de Correção</button>
+                <button onclick="switchTeacherView('themes')" class="text-xs font-bold text-slate-300 hover:text-white transition-colors uppercase tracking-widest">Gerenciar Temas</button>
+            </div>
+            
             <div class="flex items-center gap-4 sm:gap-6">
                 <span class="hidden sm:block text-slate-300 text-xs font-bold uppercase tracking-wider"><?= htmlspecialchars($firstName) ?></span>
                 <a href="../api/logout.php" class="text-[9px] sm:text-[10px] font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-widest px-2 py-1 hover:bg-slate-800 rounded">ENCERRAR SESSÃO</a>
@@ -63,9 +69,63 @@ $firstName = explode(' ', $user['name'])[0];
             </div>
             <div id="queue-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6"></div>
         </div>
+        
+        <div id="view-themes" class="hidden">
+            <div class="max-w-4xl mx-auto space-y-10">
+                
+                <div>
+                    <div class="mb-8 border-b border-slate-200 pb-6 flex justify-between items-end">
+                        <div>
+                            <h2 id="form-title-h2" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Publicar Tema de Redação</h2>
+                            <p class="text-slate-500 text-sm mt-2 font-medium">Crie textos motivadores para orientar os alunos.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm transition-all" id="theme-form-container">
+                        <form id="theme-form" class="space-y-6">
+                            <input type="hidden" id="theme-id" value="">
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Título do Tema</label>
+                                <input type="text" id="theme-title" required class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl text-lg font-bold text-slate-800 outline-none focus:border-indigo-400 transition-colors" placeholder="Ex: Os desafios da inteligência artificial..." />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Imagem de Apoio (Opcional)</label>
+                                <input type="file" id="theme-image" accept="image/*" class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl text-sm outline-none transition-colors" />
+                                <p id="edit-img-notice" class="text-xs text-amber-600 mt-2 hidden font-medium">Deixe vazio para manter a imagem atual.</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Texto de Apoio / Artigo</label>
+                                <textarea id="theme-content" required rows="6" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl text-sm text-slate-700 outline-none focus:border-indigo-400 transition-colors leading-relaxed resize-y"></textarea>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                                <button type="button" onclick="submitTheme('draft')" class="flex-1 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 font-bold py-4 rounded-xl transition-all text-xs uppercase tracking-widest">
+                                    Salvar Rascunho
+                                </button>
+                                <button type="button" onclick="submitTheme('published')" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-4 rounded-xl transition-all text-xs uppercase tracking-widest shadow-lg">
+                                    Publicar para Alunos
+                                </button>
+                            </div>
+                            <button type="button" id="btn-cancel-edit" onclick="cancelEditTheme()" class="hidden w-full text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest hover:underline mt-2">
+                                Cancelar Edição
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                        Seus Temas
+                        <span id="themes-count" class="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full font-black">0</span>
+                    </h3>
+                    <div id="teacher-themes-list" class="space-y-4"></div>
+                </div>
+
+            </div>
+        </div>
 
         <div id="view-workspace" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            
             <div class="lg:col-span-4 order-1 lg:order-2 space-y-5 lg:sticky lg:top-24 pb-4">
                 <div class="flex items-center justify-between">
                     <button id="btn-back" class="text-[10px] sm:text-xs font-bold text-slate-500 hover:text-indigo-600 uppercase tracking-widest transition-colors flex items-center gap-2 group">
@@ -135,6 +195,140 @@ $firstName = explode(' ', $user['name'])[0];
             setTimeout(() => toast.style.opacity = '0', 3500);
         };
 
+        let teacherThemes = [];
+
+        // Alternar Telas
+        window.switchTeacherView = (view) => {
+            document.getElementById('view-queue').classList.add('hidden');
+            document.getElementById('view-workspace').classList.add('hidden');
+            document.getElementById('view-themes').classList.add('hidden');
+            
+            if (view === 'queue') {
+                document.getElementById('view-queue').classList.remove('hidden');
+                loadPendingEssays();
+            } else if (view === 'themes') {
+                document.getElementById('view-themes').classList.remove('hidden');
+                loadTeacherThemes(); // Carrega os temas ao abrir a aba
+            }
+        };
+
+        // --- LÓGICA DE TEMAS DO PROFESSOR ---
+        async function loadTeacherThemes() {
+            try {
+                const res = await fetch('../api/api_get_teacher_themes.php');
+                teacherThemes = await res.json();
+                renderTeacherThemes();
+            } catch (e) {
+                showToast('Erro ao carregar temas', 'error');
+            }
+        }
+
+        function renderTeacherThemes() {
+            const listDiv = document.getElementById('teacher-themes-list');
+            document.getElementById('themes-count').textContent = teacherThemes.length;
+
+            if (teacherThemes.length === 0) {
+                listDiv.innerHTML = `<div class="bg-slate-50 border-2 border-slate-200 border-dashed rounded-2xl py-12 text-center"><p class="font-bold text-slate-400 text-sm">Nenhum tema criado.</p></div>`;
+                return;
+            }
+
+            listDiv.innerHTML = teacherThemes.map((t, i) => {
+                const date = new Date(t.created_at).toLocaleDateString('pt-BR');
+                const hasImg = t.image_path ? true : false;
+                const statusBadge = t.status === 'draft' 
+                    ? `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Rascunho</span>` 
+                    : `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Publicado</span>`;
+                
+                return `
+                <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:border-indigo-300 transition-colors duration-300 group">
+                    ${hasImg ? `<img src="../api/${t.image_path}" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">` : `<div class="w-full sm:w-32 h-24 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100"><span class="text-indigo-300 text-2xl">📝</span></div>`}
+                    
+                    <div class="flex-1 min-w-0 w-full">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <div class="flex items-center gap-2">
+                                ${statusBadge}
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${date}</p>
+                            </div>
+                            <div class="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                <button onclick="editTheme(${i})" class="w-7 h-7 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Editar">✏️</button>
+                                <button onclick="deleteTheme(${t.id})" class="w-7 h-7 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1.5 truncate pr-8">${t.title}</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${t.content}</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.submitTheme = async (statusToSave) => {
+            const title = document.getElementById('theme-title').value;
+            const content = document.getElementById('theme-content').value;
+            
+            if(!title || !content) return showToast('PREENCHA O TÍTULO E O CONTEÚDO', 'error');
+
+            const formData = new FormData();
+            formData.append('id', document.getElementById('theme-id').value);
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('status', statusToSave);
+            
+            const imageFile = document.getElementById('theme-image').files[0];
+            if(imageFile) formData.append('image', imageFile);
+
+            try {
+                const res = await fetch('../api/api_save_theme.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Erro ao salvar');
+                
+                showToast(statusToSave === 'draft' ? 'RASCUNHO SALVO' : 'TEMA PUBLICADO', 'success');
+                cancelEditTheme();
+                loadTeacherThemes();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        };
+
+        window.editTheme = (idx) => {
+            const t = teacherThemes[idx];
+            document.getElementById('theme-id').value = t.id;
+            document.getElementById('theme-title').value = t.title;
+            document.getElementById('theme-content').value = t.content;
+            
+            document.getElementById('form-title-h2').textContent = "Editando Tema";
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+            document.getElementById('edit-img-notice').classList.remove('hidden');
+            document.getElementById('theme-form-container').classList.add('ring-4', 'ring-indigo-100');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.cancelEditTheme = () => {
+            document.getElementById('theme-id').value = '';
+            document.getElementById('theme-form').reset();
+            document.getElementById('form-title-h2').textContent = "Publicar Tema de Redação";
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('edit-img-notice').classList.add('hidden');
+            document.getElementById('theme-form-container').classList.remove('ring-4', 'ring-indigo-100');
+        };
+
+        window.deleteTheme = async (id) => {
+            if(!confirm('Tem certeza que deseja excluir permanentemente este tema?')) return;
+            try {
+                const res = await fetch('../api/api_delete_theme.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                if(!res.ok) throw new Error('Erro ao excluir');
+                showToast('TEMA EXCLUÍDO', 'success');
+                loadTeacherThemes();
+            } catch (err) {
+                showToast('ERRO AO EXCLUIR', 'error');
+            }
+        };
+
+        // O Restante da lógica (Essays, SVG, Correção) permanece inalterado
         let essays = [];
         let activeEssay = null;
         let inlineComments = [];
@@ -164,7 +358,6 @@ $firstName = explode(' ', $user['name'])[0];
             }).join('');
         }
 
-        // Lógica da Área de Correção
         window.openEssay = async (id) => {
             try {
                 const res = await fetch(`../api/api_get_essay_details.php?id=${id}`);
@@ -202,7 +395,6 @@ $firstName = explode(' ', $user['name'])[0];
             activeEssay = null;
         });
 
-        // Níveis e Pontuação
         function updateScore() {
             const total = Object.values(compLevels).reduce((s, lvl) => s + (lvl * 40), 0);
             document.getElementById('total-score').textContent = total;
@@ -228,11 +420,9 @@ $firstName = explode(' ', $user['name'])[0];
                 </div>
             `).join('');
             
-            // Legendas superiores
             document.getElementById('comp-legends').innerHTML = Object.values(COMPETENCIES).map(c => `<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${c.light} border ${c.border}"><span class="w-3.5 h-3.5 rounded-full ${c.bg}"></span><span class="text-[10px] font-bold ${c.text}">${c.short} — ${c.title}</span></div>`).join('');
         }
 
-        // --- SISTEMA DE DESENHO SVG ---
         const drawingArea = document.getElementById('drawing-area');
         const essayImage = document.getElementById('essay-image');
         const svgOverlay = document.getElementById('svg-overlay');
@@ -268,7 +458,6 @@ $firstName = explode(' ', $user['name'])[0];
         }
         drawingArea.addEventListener('mouseup', finishDrawing); drawingArea.addEventListener('mouseleave', finishDrawing);
 
-        // --- MODAL & COMENTÁRIOS ---
         let selectedCompId = null;
 
         function openModal() {
@@ -326,27 +515,23 @@ $firstName = explode(' ', $user['name'])[0];
                 const comp = COMPETENCIES[c.competency];
                 const pts = typeof c.excerpt === 'string' ? JSON.parse(c.excerpt) : c.excerpt;
                 
-                // SVG Polyline
                 const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
                 poly.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
                 poly.setAttribute('fill', 'none'); poly.setAttribute('stroke', comp.stroke); poly.setAttribute('stroke-width', '2.5'); poly.setAttribute('stroke-linecap', 'round'); poly.setAttribute('stroke-linejoin', 'round'); poly.setAttribute('vector-effect', 'non-scaling-stroke');
                 svgOverlay.appendChild(poly);
 
-                // Marker
                 const marker = document.createElement('div');
                 marker.className = `absolute w-6 h-6 sm:w-7 sm:h-7 text-white rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-lg transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto ring-2 ring-white cursor-help hover:scale-125 hover:z-30 transition-all`;
                 marker.style.left = `${c.x_pos}%`; marker.style.top = `${c.y_pos}%`; marker.style.backgroundColor = comp.hex;
                 marker.title = `${comp.short}: ${c.comment}`; marker.textContent = i + 1;
                 markersOverlay.appendChild(marker);
 
-                // Side List
                 htmlList += `<div class="relative flex items-start gap-3 p-3 ${comp.light} border ${comp.border} rounded-xl"><span class="flex-shrink-0 w-6 h-6 rounded-full ${comp.bg} text-white text-[10px] font-black flex items-center justify-center mt-0.5">${i + 1}</span><div class="min-w-0 flex-1 pr-5"><span class="text-[9px] font-black ${comp.text} uppercase">${comp.short}</span><p class="text-xs text-slate-700 mt-0.5 leading-snug">${c.comment}</p></div><button onclick="removeComment(${i})" class="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors text-xs">✕</button></div>`;
             });
             document.getElementById('comments-list').innerHTML = htmlList;
         }
 
-// Submissão
-window.submitCorrection = async (status) => {
+        window.submitCorrection = async (status) => {
             const feedback = document.getElementById('general-feedback').value;
             if (status === 'final' && !feedback) return showToast('PREENCHA O PARECER GERAL', 'error');
 
@@ -359,19 +544,14 @@ window.submitCorrection = async (status) => {
             };
 
             try {
-                // ATENÇÃO: O uso de crases (`) aqui é OBRIGATÓRIO para o ID ser injetado na URL!
                 const res = await fetch(`../api/api_correct_essay.php?id=${activeEssay.id}`, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify(payload) 
                 });
                 
-                const data = await res.json(); // Pega a resposta do PHP
-
-                // Se o PHP retornar erro, nós disparamos para o catch
-                if (!res.ok) {
-                    throw new Error(data.error || 'Erro desconhecido no servidor');
-                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Erro desconhecido no servidor');
 
                 showToast(status === 'final' ? 'AVALIAÇÃO REGISTRADA' : 'RASCUNHO GUARDADO', 'success');
                 if(status === 'final') {
@@ -382,12 +562,11 @@ window.submitCorrection = async (status) => {
                     }, 1000);
                 }
             } catch (e) { 
-                // Agora o toast vermelho vai mostrar exatamente a falha do banco de dados!
                 showToast(e.message || 'ERRO AO SALVAR', 'error'); 
-                console.error("Detalhes do erro do PHP:", e);
             }
         };
 
+        // Carrega inicialmente a fila de correção
         loadPendingEssays();
     </script>
 </body>

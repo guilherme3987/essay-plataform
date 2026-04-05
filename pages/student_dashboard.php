@@ -30,6 +30,12 @@ $firstName = explode(' ', $user['name'])[0];
                 </div>
                 <span class="font-bold text-lg text-slate-900 tracking-tight hidden sm:block">RedaçãoPro</span>
             </div>
+            
+            <div class="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
+                <button onclick="switchStudentView('list')" class="text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors uppercase tracking-widest">Meus Envios</button>
+                <button onclick="switchStudentView('themes')" class="text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors uppercase tracking-widest">Temas de Redação</button>
+            </div>
+
             <div class="flex items-center gap-4 sm:gap-6">
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse hidden sm:block"></div>
@@ -87,8 +93,29 @@ $firstName = explode(' ', $user['name'])[0];
                     <h2 class="text-xl font-bold text-slate-900">Histórico de Envios</h2>
                     <span id="total-count" class="text-[10px] font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-md tracking-widest">0 TOTAL</span>
                 </div>
-                <div id="essays-list" class="space-y-4">
-                    </div>
+                <div id="essays-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <div id="view-themes-list" class="hidden">
+            <div class="mb-8 border-b border-slate-200 pb-6">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Banco de Temas</h2>
+                <p class="text-slate-500 text-sm mt-2 font-medium">Textos de apoio e artigos publicados pelos professores.</p>
+            </div>
+            
+            <div id="themes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </div>
+        
+        <div id="theme-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-sm">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden relative">
+                <button onclick="closeThemeModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold transition-colors">✕</button>
+                <div class="overflow-y-auto p-6 sm:p-10">
+                    <p id="modal-theme-date" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-3">DATA AQUI</p>
+                    <h2 id="modal-theme-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-8">Título</h2>
+                    <img id="modal-theme-img" src="" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
+                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap"></div>
+                </div>
             </div>
         </div>
 
@@ -145,6 +172,7 @@ $firstName = explode(' ', $user['name'])[0];
     </main>
 
     <script>
+        // MANTENDO A LÓGICA ORIGINAL DO JAVASCRIPT INTACTA
         const COMPETENCIES = [
             { id: 1, short: 'C1', title: 'Modalidade Escrita Formal', bg: 'bg-blue-500', light: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', bar: 'bg-blue-500', stroke: 'rgba(59,130,246,0.70)', hex: '#3b82f6' },
             { id: 2, short: 'C2', title: 'Compreensão do Tema', bg: 'bg-violet-500', light: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', bar: 'bg-violet-500', stroke: 'rgba(139,92,246,0.70)', hex: '#8b5cf6' },
@@ -152,9 +180,7 @@ $firstName = explode(' ', $user['name'])[0];
             { id: 4, short: 'C4', title: 'Mecanismos Linguísticos', bg: 'bg-amber-500', light: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', bar: 'bg-amber-500', stroke: 'rgba(245,158,11,0.70)', hex: '#f59e0b' },
             { id: 5, short: 'C5', title: 'Proposta de Intervenção', bg: 'bg-rose-500', light: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', bar: 'bg-rose-500', stroke: 'rgba(244,63,94,0.70)', hex: '#f43f5e' }
         ];
-        const compById = id => COMPETENCIES.find(c => c.id === id) || COMPETENCIES[0];
 
-        // UI Helpers
         const showToast = (msg, type = 'info') => {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -169,13 +195,83 @@ $firstName = explode(' ', $user['name'])[0];
             return { color: 'border-slate-100 opacity-90', dot: 'bg-slate-400', label: 'AGUARDANDO' };
         };
 
-        // Estado Global
         let essays = [];
+        let themes = [];
 
-        // Carregar Redações
+        // --- NOVO: Lógica de Alternância de Tela ---
+        window.switchStudentView = (view) => {
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-mirror').classList.add('hidden');
+            document.getElementById('view-themes-list').classList.add('hidden');
+            
+            if (view === 'list') {
+                document.getElementById('view-list').classList.remove('hidden');
+                loadEssays();
+            } else if (view === 'themes') {
+                document.getElementById('view-themes-list').classList.remove('hidden');
+                loadThemes();
+            }
+        };
+
+        async function loadThemes() {
+            try {
+                const res = await fetch('../api/api_get_themes.php');
+                themes = await res.json();
+                renderThemes();
+            } catch (e) {
+                showToast('Erro ao carregar temas', 'error');
+            }
+        }
+
+        function renderThemes() {
+            const grid = document.getElementById('themes-grid');
+            if(themes.length === 0) {
+                grid.innerHTML = `<div class="col-span-full bg-transparent border-2 border-slate-200 border-dashed rounded-3xl py-16 flex items-center justify-center text-center"><p class="font-bold text-slate-400 text-lg">Nenhum tema publicado ainda.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = themes.map((t, i) => {
+                const date = new Date(t.created_at).toLocaleDateString('pt-BR');
+                const hasImg = t.image_path ? true : false;
+                return `
+                <div onclick="openThemeModal(${i})" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full">
+                    ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="../api/${t.image_path}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
+                    <div class="p-6 flex flex-col flex-1">
+                        <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">${date}</p>
+                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${t.title}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-3 mt-auto">${t.content}</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.openThemeModal = (index) => {
+            const t = themes[index];
+            const date = new Date(t.created_at).toLocaleDateString('pt-BR');
+            
+            document.getElementById('modal-theme-date').textContent = `PUBLICADO EM ${date}`;
+            document.getElementById('modal-theme-title').textContent = t.title;
+            document.getElementById('modal-theme-content').textContent = t.content;
+            
+            const imgEl = document.getElementById('modal-theme-img');
+            if (t.image_path) {
+                imgEl.src = `../api/${t.image_path}`;
+                imgEl.classList.remove('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+            }
+            
+            document.getElementById('theme-modal').classList.remove('hidden');
+        };
+
+        window.closeThemeModal = () => {
+            document.getElementById('theme-modal').classList.add('hidden');
+        };
+
+
         async function loadEssays() {
             try {
-                const res = await fetch('../api/api_get_my_essays.php'); // CRIE ESTE ENDPOINT
+                const res = await fetch('../api/api_get_my_essays.php');
                 essays = await res.json();
                 renderList();
             } catch (e) {
@@ -214,7 +310,6 @@ $firstName = explode(' ', $user['name'])[0];
             }).join('');
         }
 
-        // Lógica de Upload
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         const fileName = document.getElementById('file-name');
@@ -243,12 +338,9 @@ $firstName = explode(' ', $user['name'])[0];
             formData.append('file', file);
             try {
                 const res = await fetch('../api/api_upload_essay.php', { method: 'POST', body: formData }); 
-                const data = await res.json(); // Pega a resposta real do PHP
+                const data = await res.json();
 
-                // Se o PHP retornar erro (400, 401, 500...)
-                if (!res.ok) {
-                    throw new Error(data.error || 'Erro desconhecido no servidor');
-                }
+                if (!res.ok) throw new Error(data.error || 'Erro desconhecido no servidor');
 
                 showToast('REDAÇÃO ENVIADA COM SUCESSO', 'success');
                 uploadForm.reset();
@@ -257,7 +349,6 @@ $firstName = explode(' ', $user['name'])[0];
                 dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
                 loadEssays();
             } catch (error) {
-                // Agora o toast vai mostrar a mensagem real de erro do PHP!
                 showToast(error.message || 'FALHA NO ENVIO', 'error');
                 console.error("Erro detalhado:", error);
             } finally {
@@ -266,7 +357,6 @@ $firstName = explode(' ', $user['name'])[0];
             }
         });
 
-        // Lógica do Espelho da Correção
         window.openMirror = (id) => {
             const essay = essays.find(e => e.id === id);
             if(essay.status !== 'corrected') return;
@@ -274,17 +364,14 @@ $firstName = explode(' ', $user['name'])[0];
             document.getElementById('view-list').classList.add('hidden');
             document.getElementById('view-mirror').classList.remove('hidden');
 
-            // Preencher dados gerais
             document.getElementById('mirror-img').src = '../api/' + essay.file_path;
             const score = essay.correction?.score ?? 0;
             document.getElementById('mirror-score').textContent = score;
             document.getElementById('mirror-score-bar').style.width = `${(score/1000)*100}%`;
             document.getElementById('mirror-feedback').textContent = essay.correction?.general_feedback || 'Sem parecer final.';
 
-            // Preencher Legendas
             document.getElementById('mirror-legends').innerHTML = COMPETENCIES.map(c => `<div class="flex items-center gap-1 px-2 py-0.5 rounded-md ${c.light} border ${c.border}"><span class="w-2.5 h-2.5 rounded-full ${c.bg}"></span><span class="text-[9px] font-bold ${c.text}">${c.short}</span></div>`).join('');
 
-            // Preencher Barras de Competência
             const scores = { 1: essay.correction.comp1_score, 2: essay.correction.comp2_score, 3: essay.correction.comp3_score, 4: essay.correction.comp4_score, 5: essay.correction.comp5_score };
             document.getElementById('mirror-comps').innerHTML = COMPETENCIES.map(c => {
                 const s = scores[c.id] || 0;
@@ -292,7 +379,6 @@ $firstName = explode(' ', $user['name'])[0];
                 return `<div class="${c.light} border ${c.border} rounded-xl p-4"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2 min-w-0"><span class="w-7 h-7 rounded-full ${c.bg} flex items-center justify-center text-white text-[10px] font-black flex-shrink-0">${c.short}</span><div><p class="text-[11px] font-bold ${c.text} truncate">${c.title}</p><p class="text-[10px] text-slate-400 font-medium">Nível ${level} de 5</p></div></div><div class="text-right flex-shrink-0 ml-2"><span class="text-xl font-black ${c.text}">${s}</span><span class="text-xs text-slate-400">/200</span></div></div><div class="h-1.5 bg-white/70 rounded-full overflow-hidden mt-2"><div class="h-full ${c.bar} rounded-full transition-all duration-700" style="width: ${(s/200)*100}%"></div></div></div>`;
             }).join('');
 
-            // Desenhar SVGs e Marcadores
             const svg = document.getElementById('mirror-svg');
             const markers = document.getElementById('mirror-markers');
             const commentsList = document.getElementById('mirror-comments');
@@ -300,7 +386,6 @@ $firstName = explode(' ', $user['name'])[0];
 
             const comments = essay.correction?.comments || [];
             
-            // Agrupar comentários por competência
             let groupedComments = '';
             COMPETENCIES.forEach(comp => {
                 const compComments = comments.filter(c => c.competency === comp.id);
@@ -312,7 +397,6 @@ $firstName = explode(' ', $user['name'])[0];
                     const globalIdx = comments.indexOf(c) + 1;
                     groupedComments += `<div class="flex gap-3 p-3 mb-1 ${comp.light} border ${comp.border} rounded-xl"><span class="flex-shrink-0 w-5 h-5 ${comp.bg} text-white font-bold rounded-full flex items-center justify-center text-[9px]">${globalIdx}</span><p class="text-slate-700 text-sm leading-relaxed">${c.comment}</p></div>`;
                     
-                    // Desenha linha
                     if(c.excerpt) {
                         const pts = JSON.parse(c.excerpt);
                         const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
@@ -321,7 +405,6 @@ $firstName = explode(' ', $user['name'])[0];
                         svg.appendChild(poly);
                     }
                     
-                    // Desenha bolinha
                     const marker = document.createElement('div');
                     marker.className = `absolute w-7 h-7 text-white rounded-full flex items-center justify-center text-[11px] font-black shadow-lg transform -translate-x-1/2 -translate-y-1/2 cursor-help ring-4 ring-white/80 hover:scale-125 hover:z-30 transition-all duration-200 pointer-events-auto`;
                     marker.style.left = `${c.x_pos}%`; marker.style.top = `${c.y_pos}%`; marker.style.backgroundColor = comp.hex;
