@@ -3,6 +3,9 @@ Dockerfile
 docker-compose.yml
 docker-compose.yaml
 
+# Entrypoint
+entrypoint.sh
+
 # Arquivos de teste
 test_db.php
 
@@ -10,5 +13,6 @@ test_db.php
 database/db.php
 init.sql
 
-# Uploads
+# Uploads e configurações de estilo
 uploads/
+node_modules/

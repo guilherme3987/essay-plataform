@@ -14,15 +14,7 @@ if (isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - RedaçãoPro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <style> 
-        body { font-family: 'Outfit', sans-serif; } 
-        .anim-up { animation: fadeUp 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
 <body class="flex w-full min-h-screen bg-slate-50 overflow-hidden text-slate-800">
     <div class="hidden lg:flex w-[45%] max-w-[600px] relative flex-col justify-between p-12 xl:p-16 bg-indigo-600 overflow-hidden flex-shrink-0 group">
@@ -71,6 +63,10 @@ if (isset($_SESSION['user'])) {
                 <button type="submit" id="submit-btn" class="w-full bg-slate-900 hover:bg-indigo-600 text-white font-bold py-4 rounded-xl transition-all duration-300 text-sm uppercase tracking-widest shadow-lg disabled:opacity-70">
                     ACESSAR PLATAFORMA
                 </button>
+                <div class="mt-8 text-center anim-up delay-200">
+                    <p class="text-xs text-slate-500 font-medium">Ainda não tem uma conta?</p>
+                    <a href="register.php" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-widest mt-1 inline-block transition-colors">CRIAR CONTA AGORA</a>
+                </div>
             </form>
         </div>
     </div>

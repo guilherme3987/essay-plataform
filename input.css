@@ -1,0 +1,50 @@
+/* input.css */
+
+/* Diretivas padrão do Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------
+   FONTES LOCAIS: OUTFIT
+----------------------------------- */
+
+/* Outfit - 300 (Light) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../assets/fonts/outfit-v15-latin-300.woff2') format('woff2');
+}
+
+/* Outfit - 400 (Regular) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/outfit-v15-latin-regular.woff2') format('woff2');
+}
+
+/* Outfit - 500 (Medium) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/outfit-v15-latin-500.woff2') format('woff2');
+}
+
+/* Outfit - 600 (SemiBold) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../assets/fonts/outfit-v15-latin-600.woff2') format('woff2');
+}
+
+/* Outfit - 900 (Black) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../assets/fonts/outfit-v15-latin-900.woff2') format('woff2');
+}

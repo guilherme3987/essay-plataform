@@ -14,9 +14,7 @@ $firstName = explode(' ', $user['name'])[0];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Aluno - RedaçãoPro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Outfit', sans-serif; } </style>
+    <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800">
 
@@ -114,7 +112,10 @@ $firstName = explode(' ', $user['name'])[0];
                     <p id="modal-theme-date" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-3">DATA AQUI</p>
                     <h2 id="modal-theme-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-8">Título</h2>
                     <img id="modal-theme-img" src="" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
-                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap"></div>
+                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap mb-8"></div>
+                    
+                    <div id="modal-theme-pdf-container" class="hidden border-t border-slate-200 pt-6"></div>
+
                 </div>
             </div>
         </div>
@@ -233,6 +234,12 @@ $firstName = explode(' ', $user['name'])[0];
             grid.innerHTML = themes.map((t, i) => {
                 const date = new Date(t.created_at).toLocaleDateString('pt-BR');
                 const hasImg = t.image_path ? true : false;
+                
+                // Novo: Badge indicando presença de PDF
+                const pdfBadge = t.pdf_path 
+                    ? `<div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-red-600 text-[10px] font-black uppercase tracking-widest"><span class="text-sm">📄</span> MATERIAL DE APOIO PDF</div>` 
+                    : '';
+
                 return `
                 <div onclick="openThemeModal(${i})" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full">
                     ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="../api/${t.image_path}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
@@ -240,6 +247,7 @@ $firstName = explode(' ', $user['name'])[0];
                         <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">${date}</p>
                         <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${t.title}</h3>
                         <p class="text-xs text-slate-500 line-clamp-3 mt-auto">${t.content}</p>
+                        ${pdfBadge}
                     </div>
                 </div>`;
             }).join('');
@@ -259,6 +267,20 @@ $firstName = explode(' ', $user['name'])[0];
                 imgEl.classList.remove('hidden');
             } else {
                 imgEl.classList.add('hidden');
+            }
+
+            // NOVO: Adiciona e mostra botão de PDF se existir
+            const pdfContainer = document.getElementById('modal-theme-pdf-container');
+            if (t.pdf_path) {
+                pdfContainer.innerHTML = `
+                    <a href="../api/${t.pdf_path}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-3 px-6 rounded-xl transition-colors duration-200">
+                        <span class="text-xl">📄</span>
+                        <span class="text-xs uppercase tracking-widest">Abrir Material de Apoio (PDF)</span>
+                    </a>
+                `;
+                pdfContainer.classList.remove('hidden');
+            } else {
+                pdfContainer.classList.add('hidden');
             }
             
             document.getElementById('theme-modal').classList.remove('hidden');

@@ -56,8 +56,10 @@ docker compose up -d --build
 
 As próximas atualizações do projeto focarão na escalabilidade da gestão de usuários e fluxos de estudo:
 
-- [ ] **Lógica de Turmas:** Criar a estrutura de turmas/classes no banco de dados.
+- [ ] **Lógica de Turmas:** Criar a estrutura de turmas no banco de dados.
 - [ ] **Vínculo Aluno-Turma:** Permitir a adição e o remanejamento de alunos dentro de turmas específicas.
-- [ ] **Gestão Facilitada:** Desenvolver um painel administrativo/dashboard mais robusto e intuitivo para organizar os temas por turmas (ex: enviar um tema específico apenas para a turma do "3º Ano A"). Adicionar temas e enviar para qualquer turma
-- [ ] **Filtros e Relatórios:** Permitir que o professor filtre o desempenho por turma e identifique as maiores dificuldades gerais dos alunos nas competências avaliadas.
+- [ ] **Gestão Facilitada:** Desenvolver um painel administrativo/dashboard mais robusto e intuitivo para organizar os temas por turmas (ex: enviar um tema específico apenas para uma turma").Adicionar temas e enviar para qualquer turma
+
+
+
 ```
