@@ -249,11 +249,66 @@ $firstName = explode(' ', $user['name'])[0];
 
     <script>
         const COMPETENCIES = {
-            1: { id: 1, short: 'C1', title: 'Modalidade Escrita Formal',   desc: 'Domínio da norma culta.',                            bg: 'bg-blue-500',   light: 'bg-blue-50',   border: 'border-blue-300',   text: 'text-blue-700',   stroke: 'rgba(59,130,246,0.80)',  hex: '#3b82f6' },
-            2: { id: 2, short: 'C2', title: 'Compreensão do Tema',         desc: 'Aplicação de conceitos para o texto dissertativo.',  bg: 'bg-violet-500', light: 'bg-violet-50', border: 'border-violet-300', text: 'text-violet-700', stroke: 'rgba(139,92,246,0.80)',  hex: '#8b5cf6' },
-            3: { id: 3, short: 'C3', title: 'Seleção e Argumentação',      desc: 'Interpretação de informações e argumentos.',         bg: 'bg-emerald-500',light: 'bg-emerald-50',border: 'border-emerald-300',text: 'text-emerald-700',stroke: 'rgba(16,185,129,0.80)',  hex: '#10b981' },
-            4: { id: 4, short: 'C4', title: 'Mecanismos Linguísticos',     desc: 'Construção da argumentação.',                        bg: 'bg-amber-500',  light: 'bg-amber-50',  border: 'border-amber-300',  text: 'text-amber-700',  stroke: 'rgba(245,158,11,0.80)',  hex: '#f59e0b' },
-            5: { id: 5, short: 'C5', title: 'Proposta de Intervenção',     desc: 'Respeito aos direitos humanos.',                     bg: 'bg-rose-500',   light: 'bg-rose-50',   border: 'border-rose-300',   text: 'text-rose-700',   stroke: 'rgba(244,63,94,0.80)',   hex: '#f43f5e' }
+            1: {
+                id: 1,
+                short: 'C1',
+                title: 'Modalidade Escrita Formal',
+                desc: 'Domínio da norma culta.',
+                bg: 'bg-blue-500',
+                light: 'bg-blue-50',
+                border: 'border-blue-300',
+                text: 'text-blue-700',
+                stroke: 'rgba(59,130,246,0.80)',
+                hex: '#3b82f6'
+            },
+            2: {
+                id: 2,
+                short: 'C2',
+                title: 'Compreensão do Tema',
+                desc: 'Aplicação de conceitos para o texto dissertativo.',
+                bg: 'bg-violet-500',
+                light: 'bg-violet-50',
+                border: 'border-violet-300',
+                text: 'text-violet-700',
+                stroke: 'rgba(139,92,246,0.80)',
+                hex: '#8b5cf6'
+            },
+            3: {
+                id: 3,
+                short: 'C3',
+                title: 'Seleção e Argumentação',
+                desc: 'Interpretação de informações e argumentos.',
+                bg: 'bg-emerald-500',
+                light: 'bg-emerald-50',
+                border: 'border-emerald-300',
+                text: 'text-emerald-700',
+                stroke: 'rgba(16,185,129,0.80)',
+                hex: '#10b981'
+            },
+            4: {
+                id: 4,
+                short: 'C4',
+                title: 'Mecanismos Linguísticos',
+                desc: 'Construção da argumentação.',
+                bg: 'bg-amber-500',
+                light: 'bg-amber-50',
+                border: 'border-amber-300',
+                text: 'text-amber-700',
+                stroke: 'rgba(245,158,11,0.80)',
+                hex: '#f59e0b'
+            },
+            5: {
+                id: 5,
+                short: 'C5',
+                title: 'Proposta de Intervenção',
+                desc: 'Respeito aos direitos humanos.',
+                bg: 'bg-rose-500',
+                light: 'bg-rose-50',
+                border: 'border-rose-300',
+                text: 'text-rose-700',
+                stroke: 'rgba(244,63,94,0.80)',
+                hex: '#f43f5e'
+            }
         };
 
         const showToast = (msg, type = 'info') => {
@@ -265,7 +320,9 @@ $firstName = explode(' ', $user['name'])[0];
                                      'bg-slate-900 border-black'
             }`;
             toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3500);
         };
 
         // ─────────────────────────────────────────────
@@ -316,12 +373,12 @@ $firstName = explode(' ', $user['name'])[0];
 
             listDiv.innerHTML = teacherThemes.map((t, i) => {
                 const date = new Date(t.created_at).toLocaleDateString('pt-BR');
-                const statusBadge = t.status === 'draft'
-                    ? `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Rascunho</span>`
-                    : `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Publicado</span>`;
-                const pdfBadge = t.pdf_path
-                    ? `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ml-2" title="Possui material em PDF anexado">📎 PDF</span>`
-                    : '';
+                const statusBadge = t.status === 'draft' ?
+                    `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Rascunho</span>` :
+                    `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Publicado</span>`;
+                const pdfBadge = t.pdf_path ?
+                    `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ml-2" title="Possui material em PDF anexado">📎 PDF</span>` :
+                    '';
 
                 return `
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:border-indigo-300 transition-colors duration-300 group">
@@ -349,7 +406,7 @@ $firstName = explode(' ', $user['name'])[0];
 
         // FIX: definição única de submitTheme com class_ids incluído
         window.submitTheme = async (statusToSave) => {
-            const title   = document.getElementById('theme-title').value;
+            const title = document.getElementById('theme-title').value;
             const content = document.getElementById('theme-content').value;
             if (!title || !content) return showToast('PREENCHA O TÍTULO E O CONTEÚDO', 'error');
 
@@ -358,10 +415,10 @@ $firstName = explode(' ', $user['name'])[0];
             ).map(cb => parseInt(cb.value));
 
             const formData = new FormData();
-            formData.append('id',        document.getElementById('theme-id').value);
-            formData.append('title',     title);
-            formData.append('content',   content);
-            formData.append('status',    statusToSave);
+            formData.append('id', document.getElementById('theme-id').value);
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('status', statusToSave);
             formData.append('class_ids', JSON.stringify(checkedClasses));
 
             const imageFile = document.getElementById('theme-image').files[0];
@@ -371,7 +428,10 @@ $firstName = explode(' ', $user['name'])[0];
             if (pdfFile) formData.append('pdf', pdfFile);
 
             try {
-                const res  = await fetch('../api/api_save_theme.php', { method: 'POST', body: formData });
+                const res = await fetch('../api/api_save_theme.php', {
+                    method: 'POST',
+                    body: formData
+                });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Erro ao salvar');
                 showToast(statusToSave === 'draft' ? 'RASCUNHO SALVO' : 'TEMA PUBLICADO', 'success');
@@ -384,8 +444,8 @@ $firstName = explode(' ', $user['name'])[0];
 
         window.editTheme = (idx) => {
             const t = teacherThemes[idx];
-            document.getElementById('theme-id').value      = t.id;
-            document.getElementById('theme-title').value   = t.title;
+            document.getElementById('theme-id').value = t.id;
+            document.getElementById('theme-title').value = t.title;
             document.getElementById('theme-content').value = t.content;
             document.getElementById('form-title-h2').textContent = 'Editando Tema';
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
@@ -398,7 +458,10 @@ $firstName = explode(' ', $user['name'])[0];
                 cb.checked = Array.isArray(t.class_ids) && t.class_ids.includes(parseInt(cb.value));
             });
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         };
 
         window.cancelEditTheme = () => {
@@ -416,8 +479,12 @@ $firstName = explode(' ', $user['name'])[0];
             try {
                 const res = await fetch('../api/api_delete_theme.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id
+                    })
                 });
                 if (!res.ok) throw new Error();
                 showToast('TEMA EXCLUÍDO', 'success');
@@ -430,10 +497,16 @@ $firstName = explode(' ', $user['name'])[0];
         // ─────────────────────────────────────────────
         // FILA DE CORREÇÃO
         // ─────────────────────────────────────────────
-        let essays      = [];
+        let essays = [];
         let activeEssay = null;
         let inlineComments = [];
-        let compLevels  = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        let compLevels = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0
+        };
 
         async function loadPendingEssays() {
             try {
@@ -453,7 +526,7 @@ $firstName = explode(' ', $user['name'])[0];
                 return;
             }
             listDiv.innerHTML = essays.map(essay => {
-                const date    = new Date(essay.created_at).toLocaleDateString('pt-BR');
+                const date = new Date(essay.created_at).toLocaleDateString('pt-BR');
                 const isDraft = essay.status === 'in_correction';
                 return `
                 <div onclick="openEssay(${essay.id})" class="group bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 hover:border-indigo-400 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col">
@@ -475,9 +548,9 @@ $firstName = explode(' ', $user['name'])[0];
                 ALL_VIEWS.forEach(v => document.getElementById(v).classList.add('hidden'));
                 document.getElementById('view-workspace').classList.remove('hidden');
 
-                document.getElementById('student-name').textContent  = activeEssay.student_name;
-                document.getElementById('essay-image').src           = '../api/' + activeEssay.file_path;
-                document.getElementById('general-feedback').value    = activeEssay.correction?.general_feedback || '';
+                document.getElementById('student-name').textContent = activeEssay.student_name;
+                document.getElementById('essay-image').src = '../api/' + activeEssay.file_path;
+                document.getElementById('general-feedback').value = activeEssay.correction?.general_feedback || '';
 
                 if (activeEssay.correction) {
                     compLevels = {
@@ -489,7 +562,13 @@ $firstName = explode(' ', $user['name'])[0];
                     };
                     inlineComments = activeEssay.correction.comments || [];
                 } else {
-                    compLevels = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                    compLevels = {
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0
+                    };
                     inlineComments = [];
                 }
 
@@ -508,8 +587,8 @@ $firstName = explode(' ', $user['name'])[0];
 
         function updateScore() {
             const total = Object.values(compLevels).reduce((s, lvl) => s + lvl * 40, 0);
-            document.getElementById('total-score').textContent      = total;
-            document.getElementById('score-bar').style.width        = `${(total / 1000) * 100}%`;
+            document.getElementById('total-score').textContent = total;
+            document.getElementById('score-bar').style.width = `${(total / 1000) * 100}%`;
         }
 
         window.setCompLevel = (compId, level) => {
@@ -551,33 +630,41 @@ $firstName = explode(' ', $user['name'])[0];
         // ─────────────────────────────────────────────
         // DESENHO SVG
         // ─────────────────────────────────────────────
-        const drawingArea   = document.getElementById('drawing-area');
-        const essayImage    = document.getElementById('essay-image');
-        const svgOverlay    = document.getElementById('svg-overlay');
-        const markersOverlay= document.getElementById('markers-overlay');
+        const drawingArea = document.getElementById('drawing-area');
+        const essayImage = document.getElementById('essay-image');
+        const svgOverlay = document.getElementById('svg-overlay');
+        const markersOverlay = document.getElementById('markers-overlay');
 
-        let isDrawing = false, currentPath = [], currentPolyline = null;
+        let isDrawing = false,
+            currentPath = [],
+            currentPolyline = null;
 
         function getCursorPosition(e) {
             const rect = essayImage.getBoundingClientRect();
             return {
-                x: ((e.clientX - rect.left) / rect.width)  * 100,
-                y: ((e.clientY - rect.top)  / rect.height) * 100
+                x: ((e.clientX - rect.left) / rect.width) * 100,
+                y: ((e.clientY - rect.top) / rect.height) * 100
             };
         }
 
         drawingArea.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            isDrawing     = true;
-            currentPath   = [getCursorPosition(e)];
-            currentPolyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-            currentPolyline.setAttribute('fill',            'none');
-            currentPolyline.setAttribute('stroke',          'rgba(79,70,229,0.7)');
-            currentPolyline.setAttribute('stroke-width',    '2.5');
-            currentPolyline.setAttribute('stroke-linecap',  'round');
-            currentPolyline.setAttribute('stroke-linejoin', 'round');
-            currentPolyline.setAttribute('vector-effect',   'non-scaling-stroke');
-            svgOverlay.appendChild(currentPolyline);
+            isDrawing = true;
+            currentPath = [getCursorPosition(e)];
+
+            const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+            poly.setAttribute('points', currentPath.map(p => `${p.x},${p.y}`).join(' '));
+            poly.setAttribute('fill', 'none');
+            poly.setAttribute('stroke', '#facc15'); // ✅ amarelo fixo enquanto desenha (comp ainda não foi escolhida)
+            poly.setAttribute('stroke-width', '24');
+            poly.setAttribute('stroke-linecap', 'round');
+            poly.setAttribute('stroke-linejoin', 'round');
+            poly.setAttribute('stroke-opacity', '0.45');
+            poly.setAttribute('vector-effect', 'non-scaling-stroke');
+            poly.style.mixBlendMode = 'multiply';
+
+            svgOverlay.appendChild(poly);
+            currentPolyline = poly; // ✅ atribui para o mousemove conseguir atualizar os pontos
         });
 
         drawingArea.addEventListener('mousemove', (e) => {
@@ -595,7 +682,7 @@ $firstName = explode(' ', $user['name'])[0];
             }
             openModal();
         }
-        drawingArea.addEventListener('mouseup',    finishDrawing);
+        drawingArea.addEventListener('mouseup', finishDrawing);
         drawingArea.addEventListener('mouseleave', finishDrawing);
 
         // ─────────────────────────────────────────────
@@ -627,7 +714,7 @@ $firstName = explode(' ', $user['name'])[0];
                     }`;
             });
 
-            const c    = COMPETENCIES[id];
+            const c = COMPETENCIES[id];
             const desc = document.getElementById('modal-desc');
             desc.className = `${c.light} border ${c.border} rounded-xl px-4 py-3 block`;
             desc.innerHTML = `<p class="text-xs font-bold ${c.text}">${c.short} — ${c.title}</p><p class="text-xs text-slate-500 mt-1 leading-relaxed">${c.desc}</p>`;
@@ -637,8 +724,7 @@ $firstName = explode(' ', $user['name'])[0];
         document.getElementById('modal-comment').addEventListener('input', checkModalState);
 
         function checkModalState() {
-            document.getElementById('modal-confirm').disabled =
-                !(selectedCompId && document.getElementById('modal-comment').value.trim());
+            document.getElementById('modal-confirm').disabled = !(selectedCompId && document.getElementById('modal-comment').value.trim());
         }
 
         document.getElementById('modal-cancel').addEventListener('click', () => {
@@ -648,12 +734,12 @@ $firstName = explode(' ', $user['name'])[0];
 
         document.getElementById('modal-confirm').addEventListener('click', () => {
             const commentText = document.getElementById('modal-comment').value.trim();
-            const firstPt     = currentPath[0];
+            const firstPt = currentPath[0];
             inlineComments.push({
-                x_pos:      parseFloat(firstPt.x.toFixed(4)),
-                y_pos:      parseFloat(firstPt.y.toFixed(4)),
-                comment:    commentText,
-                excerpt:    JSON.stringify(currentPath),
+                x_pos: parseFloat(firstPt.x.toFixed(4)),
+                y_pos: parseFloat(firstPt.y.toFixed(4)),
+                comment: commentText,
+                excerpt: JSON.stringify(currentPath),
                 competency: selectedCompId
             });
             document.getElementById('modal').classList.add('hidden');
@@ -666,35 +752,38 @@ $firstName = explode(' ', $user['name'])[0];
         };
 
         function renderAllSVGComments() {
-            svgOverlay.innerHTML     = '';
+            svgOverlay.innerHTML = '';
             markersOverlay.innerHTML = '';
 
             const box = document.getElementById('comments-box');
-            if (inlineComments.length === 0) { box.classList.add('hidden'); return; }
+            if (inlineComments.length === 0) {
+                box.classList.add('hidden');
+                return;
+            }
             box.classList.remove('hidden');
             document.getElementById('comments-count').textContent = inlineComments.length;
 
             let htmlList = '';
             inlineComments.forEach((c, i) => {
                 const comp = COMPETENCIES[c.competency];
-                const pts  = typeof c.excerpt === 'string' ? JSON.parse(c.excerpt) : c.excerpt;
+                const pts = typeof c.excerpt === 'string' ? JSON.parse(c.excerpt) : c.excerpt;
 
                 const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-                poly.setAttribute('points',         pts.map(p => `${p.x},${p.y}`).join(' '));
-                poly.setAttribute('fill',            'none');
-                poly.setAttribute('stroke',          comp.stroke);
-                poly.setAttribute('stroke-width',    '2.5');
-                poly.setAttribute('stroke-linecap',  'round');
+                poly.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
+                poly.setAttribute('fill', 'none');
+                poly.setAttribute('stroke', comp.stroke);
+                poly.setAttribute('stroke-width', '2.5');
+                poly.setAttribute('stroke-linecap', 'round');
                 poly.setAttribute('stroke-linejoin', 'round');
-                poly.setAttribute('vector-effect',   'non-scaling-stroke');
+                poly.setAttribute('vector-effect', 'non-scaling-stroke');
                 svgOverlay.appendChild(poly);
 
                 const marker = document.createElement('div');
                 marker.className = `absolute w-6 h-6 sm:w-7 sm:h-7 text-white rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-lg transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto ring-2 ring-white cursor-help hover:scale-125 hover:z-30 transition-all`;
-                marker.style.left            = `${c.x_pos}%`;
-                marker.style.top             = `${c.y_pos}%`;
+                marker.style.left = `${c.x_pos}%`;
+                marker.style.top = `${c.y_pos}%`;
                 marker.style.backgroundColor = comp.hex;
-                marker.title     = `${comp.short}: ${c.comment}`;
+                marker.title = `${comp.short}: ${c.comment}`;
                 marker.textContent = i + 1;
                 markersOverlay.appendChild(marker);
 
@@ -717,21 +806,23 @@ $firstName = explode(' ', $user['name'])[0];
 
             const payload = {
                 status,
-                score:            Object.values(compLevels).reduce((s, lvl) => s + lvl * 40, 0),
+                score: Object.values(compLevels).reduce((s, lvl) => s + lvl * 40, 0),
                 general_feedback: feedback,
-                comp1_score:      compLevels[1] * 40,
-                comp2_score:      compLevels[2] * 40,
-                comp3_score:      compLevels[3] * 40,
-                comp4_score:      compLevels[4] * 40,
-                comp5_score:      compLevels[5] * 40,
-                comments:         inlineComments
+                comp1_score: compLevels[1] * 40,
+                comp2_score: compLevels[2] * 40,
+                comp3_score: compLevels[3] * 40,
+                comp4_score: compLevels[4] * 40,
+                comp5_score: compLevels[5] * 40,
+                comments: inlineComments
             };
 
             try {
-                const res  = await fetch(`../api/api_correct_essay.php?id=${activeEssay.id}`, {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify(payload)
+                const res = await fetch(`../api/api_correct_essay.php?id=${activeEssay.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Erro desconhecido no servidor');
@@ -753,8 +844,8 @@ $firstName = explode(' ', $user['name'])[0];
         // TURMAS
         // ─────────────────────────────────────────────
         let teacherClasses = [];
-        let allStudents    = [];
-        let activeClassId  = null;
+        let allStudents = [];
+        let activeClassId = null;
 
         async function loadClasses() {
             try {
@@ -774,7 +865,9 @@ $firstName = explode(' ', $user['name'])[0];
                 const select = document.getElementById('student-select');
                 select.innerHTML = '<option value="">Selecione um aluno da plataforma...</option>' +
                     allStudents.map(s => `<option value="${s.id}">${s.name} (${s.email})</option>`).join('');
-            } catch { /* silencia erros de lista de alunos */ }
+            } catch {
+                /* silencia erros de lista de alunos */
+            }
         }
 
         function renderClassesList() {
@@ -797,7 +890,10 @@ $firstName = explode(' ', $user['name'])[0];
             formData.append('action', 'create_class');
             formData.append('name', document.getElementById('class-name').value);
             try {
-                const res = await fetch('../api/api_manage_classes.php', { method: 'POST', body: formData });
+                const res = await fetch('../api/api_manage_classes.php', {
+                    method: 'POST',
+                    body: formData
+                });
                 if (!res.ok) throw new Error();
                 showToast('TURMA CRIADA', 'success');
                 document.getElementById('class-name').value = '';
@@ -811,9 +907,14 @@ $firstName = explode(' ', $user['name'])[0];
             if (!confirm('Deletar esta turma removerá o vínculo com todos os alunos. Tem certeza?')) return;
             try {
                 await fetch('../api/api_manage_classes.php', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ action: 'delete_class', id })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'delete_class',
+                        id
+                    })
                 });
                 if (activeClassId === id) {
                     activeClassId = null;
@@ -822,7 +923,9 @@ $firstName = explode(' ', $user['name'])[0];
                 }
                 showToast('TURMA DELETADA', 'success');
                 loadClasses();
-            } catch { /* silencia */ }
+            } catch {
+                /* silencia */
+            }
         };
 
         window.selectClass = (id) => {
@@ -831,12 +934,12 @@ $firstName = explode(' ', $user['name'])[0];
             const c = teacherClasses.find(x => x.id === id);
             document.getElementById('class-details-empty').classList.add('hidden');
             document.getElementById('class-details-active').classList.remove('hidden');
-            document.getElementById('active-class-name').textContent  = c.name;
+            document.getElementById('active-class-name').textContent = c.name;
             document.getElementById('active-class-count').textContent = `${c.students.length} ALUNOS`;
 
-            document.getElementById('class-students-list').innerHTML = c.students.length === 0
-                ? `<div class="p-8 text-center text-slate-400 text-sm font-medium">Nenhum aluno vinculado a esta turma.</div>`
-                : c.students.map(s => `
+            document.getElementById('class-students-list').innerHTML = c.students.length === 0 ?
+                `<div class="p-8 text-center text-slate-400 text-sm font-medium">Nenhum aluno vinculado a esta turma.</div>` :
+                c.students.map(s => `
                     <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
                         <div>
                             <p class="font-bold text-slate-800 text-sm">${s.name}</p>
@@ -852,9 +955,15 @@ $firstName = explode(' ', $user['name'])[0];
             if (!sId || !activeClassId) return;
             try {
                 await fetch('../api/api_manage_classes.php', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ action: 'add_student', class_id: activeClassId, student_id: sId })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'add_student',
+                        class_id: activeClassId,
+                        student_id: sId
+                    })
                 });
                 showToast('ALUNO VINCULADO', 'success');
                 loadClasses();
@@ -867,13 +976,21 @@ $firstName = explode(' ', $user['name'])[0];
             if (!confirm('Remover aluno desta turma?')) return;
             try {
                 await fetch('../api/api_manage_classes.php', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ action: 'remove_student', class_id: cId, student_id: sId })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'remove_student',
+                        class_id: cId,
+                        student_id: sId
+                    })
                 });
                 showToast('ALUNO REMOVIDO', 'success');
                 loadClasses();
-            } catch { /* silencia */ }
+            } catch {
+                /* silencia */
+            }
         };
 
         // ─────────────────────────────────────────────
@@ -881,17 +998,19 @@ $firstName = explode(' ', $user['name'])[0];
         // ─────────────────────────────────────────────
         async function loadClassesForThemes() {
             try {
-                const res     = await fetch('../api/api_manage_classes.php?action=get_classes');
+                const res = await fetch('../api/api_manage_classes.php?action=get_classes');
                 const classes = await res.json();
-                document.getElementById('theme-classes-checkboxes').innerHTML = classes.length === 0
-                    ? `<span class="text-xs text-rose-500 font-bold">⚠️ Crie uma turma primeiro na aba 'Turmas'.</span>`
-                    : classes.map(c => `
+                document.getElementById('theme-classes-checkboxes').innerHTML = classes.length === 0 ?
+                    `<span class="text-xs text-rose-500 font-bold">⚠️ Crie uma turma primeiro na aba 'Turmas'.</span>` :
+                    classes.map(c => `
                         <label class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
                             <input type="checkbox" name="theme_classes" value="${c.id}" class="accent-indigo-600 w-4 h-4 rounded">
                             <span class="text-xs font-bold text-slate-700">${c.name}</span>
                         </label>
                     `).join('');
-            } catch { /* silencia */ }
+            } catch {
+                /* silencia */
+            }
         }
 
         // ─────────────────────────────────────────────
@@ -900,4 +1019,5 @@ $firstName = explode(' ', $user['name'])[0];
         loadPendingEssays();
     </script>
 </body>
+
 </html>
