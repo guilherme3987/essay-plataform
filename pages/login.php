@@ -10,12 +10,14 @@ if (isset($_SESSION['user'])) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - RedaçãoPro</title>
     <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
+
 <body class="flex w-full min-h-screen bg-slate-50 overflow-hidden text-slate-800">
     <div class="hidden lg:flex w-[45%] max-w-[600px] relative flex-col justify-between p-12 xl:p-16 bg-indigo-600 overflow-hidden flex-shrink-0 group">
         <div class="relative z-10 anim-up">
@@ -67,6 +69,9 @@ if (isset($_SESSION['user'])) {
                     <p class="text-xs text-slate-500 font-medium">Ainda não tem uma conta?</p>
                     <a href="register.php" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-widest mt-1 inline-block transition-colors">CRIAR CONTA AGORA</a>
                 </div>
+                <div class="text-slate-500 mt-2 text-base text-center ">
+                    <a href="forgot_password.php">Esqueci a senha</a>
+                </div>
             </form>
         </div>
     </div>
@@ -75,7 +80,7 @@ if (isset($_SESSION['user'])) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             const errorBox = document.getElementById('error-box');
-            
+
             btn.disabled = true;
             btn.textContent = 'PROCESSANDO...';
             errorBox.classList.add('hidden');
@@ -88,7 +93,9 @@ if (isset($_SESSION['user'])) {
             try {
                 const res = await fetch('../api/api_login.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -112,4 +119,5 @@ if (isset($_SESSION['user'])) {
         });
     </script>
 </body>
+
 </html>

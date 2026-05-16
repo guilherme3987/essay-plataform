@@ -13,6 +13,10 @@ test_db.php
 database/db.php
 init.sql
 
+#Pasta Vendor
+vendor/
+
 # Uploads e configurações de estilo
 uploads/
 node_modules/
+
