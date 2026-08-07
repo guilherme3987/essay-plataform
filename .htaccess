@@ -1,0 +1,19 @@
+# =====================================================
+# Headers de segurança (exige mod_headers)
+# =====================================================
+<IfModule mod_headers.c>
+    # Evita que o navegador interprete o arquivo como outro tipo
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Impede o site de ser embutido em frames (clickjacking)
+    Header always set X-Frame-Options "DENY"
+
+    # Controla a quantidade de informação enviada no header Referer
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # CSP: permite scripts/estilos inline (usados nas páginas) e recursos locais
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+</IfModule>
+
+# Evita a listagem de diretórios
+Options -Indexes

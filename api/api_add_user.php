@@ -1,7 +1,11 @@
 <?php
-session_start();
+require_once __DIR__ . '/utils/session.php';
+require_once __DIR__ . '/utils/csrf.php';
 require_once __DIR__ . '/../database/db.php';
 header('Content-Type: application/json');
+
+start_secure_session();
+validate_csrf();
 
 // Proteção da rota: Apenas admin
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -44,7 +48,8 @@ if ($stmt->fetch()) {
 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
 try {
-    $stmt = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
+    // Usuário criado por admin deve trocar a senha no primeiro acesso
+    $stmt = $pdo->prepare('INSERT INTO users (name, email, password, role, must_change_password) VALUES (?, ?, ?, ?, 1)');
     $stmt->execute([$name, $email, $hashedPassword, $role]);
     
     echo json_encode(['success' => 'Usuário cadastrado com sucesso!']);

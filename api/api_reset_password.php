@@ -3,6 +3,9 @@ ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../database/db.php';
+require_once __DIR__ . '/utils/rate_limit.php';
+
+rate_limit_check('reset_password', 10, 3600); // máx. 10 tentativas por IP/hora
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -28,6 +31,7 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
+        rate_limit_hit('reset_password');
         ob_clean(); http_response_code(400); echo json_encode(['error' => 'Este link de recuperação é inválido ou já expirou. Por favor, solicite um novo.']); exit;
     }
 

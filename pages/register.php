@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 // Se já estiver logado, redireciona para o respectivo painel
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
@@ -77,13 +78,7 @@ if (isset($_SESSION['user'])) {
                                 <span class="role-label text-xs font-bold text-indigo-700 uppercase tracking-widest">Aluno</span>
                             </div>
                         </label>
-                        <label class="cursor-pointer" onclick="selectRole(this)">
-                            <input type="radio" name="role" value="teacher" class="peer sr-only appearance-none">
-                            <div class="role-card p-4 rounded-xl border-2 border-slate-200 text-center transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50/50 hover:scale-[1.02] active:scale-[0.97]">
-                                <span class="text-2xl mb-1 block">👨‍🏫</span>
-                                <span class="role-label text-xs font-bold text-slate-600 uppercase tracking-widest">Professor</span>
-                            </div>
-                        </label>
+
                     </div>
 
                     <script>
@@ -104,7 +99,7 @@ if (isset($_SESSION['user'])) {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-2">Senha</label>
-                        <input type="password" id="password" required minlength="6" placeholder="Mín. 6 letras" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:border-indigo-400 focus:bg-white transition-colors" />
+                        <input type="password" id="password" required minlength="6" placeholder="Mín. 6 " class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:border-indigo-400 focus:bg-white transition-colors" />
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-2">Confirmar</label>
@@ -113,7 +108,7 @@ if (isset($_SESSION['user'])) {
                 </div>
 
                 <button type="submit" id="btn-submit" class="w-full bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold py-4 rounded-xl transition-all duration-200 text-[11px] uppercase tracking-widest mt-2 shadow-lg shadow-slate-900/20">
-                    CADASTRAR E ENTRAR
+                    CADASTRAR 
                 </button>
             </form>
         </div>
@@ -125,6 +120,18 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <script>
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         const showToast = (msg, type = 'info') => {
             const toast = document.getElementById('toast');
             toast.textContent = msg;

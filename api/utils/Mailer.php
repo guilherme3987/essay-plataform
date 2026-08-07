@@ -6,22 +6,31 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../../vendor/autoload.php';
 class Mailer {
     private $mail;
+    private $enabled;
 
     public function __construct() {
         $this->mail = new PHPMailer(true);
         $this->mail->CharSet = 'UTF-8';
-        
-        // Configurações do Servidor SMTP 
-        $this->mail->isSMTP();
-        $this->mail->Host       = 'smtp-relay.brevo.com'; // 
-        $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = 'ab74be001@smtp-brevo.com'; 
-        $this->mail->Password   = 'xsmtpsib-d49317ce5556d162b5cfbc22496eabb0a97b6dc4d069010d71a14a529fdca2cc-vYlYPjw4oInrNYnh';
-        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; 
-        $this->mail->Port       = 587;
 
-        // Remetente Padrão
-        $this->mail->setFrom('guilhermesmt3987@gmail.com', 'Plataforma RedaçãoPro');
+        // Configurações SMTP lidas de variáveis de ambiente.
+        // As credenciais NÃO devem ser versionadas no código.
+        $this->mail->isSMTP();
+        $this->mail->Host       = getenv('SMTP_HOST') ?: '';
+        $this->mail->SMTPAuth   = true;
+        $this->mail->Username   = getenv('SMTP_USER') ?: '';
+        $this->mail->Password   = getenv('SMTP_PASS') ?: '';
+        $this->mail->SMTPSecure = getenv('SMTP_SECURE') ?: PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mail->Port       = (int)(getenv('SMTP_PORT') ?: 587);
+
+        // Remetente padrão
+        $from = getenv('SMTP_FROM') ?: 'no-reply@redacaopro.local';
+        $fromName = getenv('SMTP_FROM_NAME') ?: 'Plataforma RedaçãoPro';
+        $this->mail->setFrom($from, $fromName);
+
+        $this->enabled = ($this->mail->Host !== '' && $this->mail->Username !== '' && $this->mail->Password !== '');
+        if (!$this->enabled) {
+            error_log('Mailer: credenciais SMTP não configuradas (SMTP_HOST/SMTP_USER/SMTP_PASS).');
+        }
     }
 
     /**
@@ -34,6 +43,11 @@ class Mailer {
      * @return bool Retorna true se o e-mail foi enviado com sucesso, false caso contrário
      */
     public function send(string $toEmail, string $toName, string $subject, string $htmlBody): bool{
+        if (!$this->enabled) {
+            error_log("Mailer desabilitado. E-mail para $toEmail não enviado.");
+            return false;
+        }
+
         try {
             $this->mail->clearAddresses();
             $this->mail->addAddress($toEmail, $toName);

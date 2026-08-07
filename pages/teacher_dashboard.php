@@ -1,7 +1,13 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'teacher') {
     header('Location: login.php');
+    exit;
+}
+// Força troca de senha no primeiro acesso
+if (!empty($_SESSION['user']['must_change_password'])) {
+    header('Location: change_password.php');
     exit;
 }
 $user = $_SESSION['user'];
@@ -248,6 +254,21 @@ $firstName = explode(' ', $user['name'])[0];
     </main>
 
     <script>
+        // Segurança: token CSRF injetado pelo servidor
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         const COMPETENCIES = {
             1: {
                 id: 1,
@@ -383,7 +404,7 @@ $firstName = explode(' ', $user['name'])[0];
                 return `
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:border-indigo-300 transition-colors duration-300 group">
                     ${t.image_path
-                        ? `<img src="../api/${t.image_path}" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">`
+                        ? `<img src="../api/${esc(t.image_path)}" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">`
                         : `<div class="w-full sm:w-32 h-24 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100"><span class="text-indigo-300 text-2xl">📝</span></div>`
                     }
                     <div class="flex-1 min-w-0 w-full">
@@ -397,8 +418,8 @@ $firstName = explode(' ', $user['name'])[0];
                                 <button onclick="deleteTheme(${t.id})" class="w-7 h-7 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Excluir">🗑️</button>
                             </div>
                         </div>
-                        <h4 class="font-bold text-slate-900 text-base mb-1.5 truncate pr-8">${t.title}</h4>
-                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${t.content}</p>
+                        <h4 class="font-bold text-slate-900 text-base mb-1.5 truncate pr-8">${esc(t.title)}</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${esc(t.content)}</p>
                     </div>
                 </div>`;
             }).join('');
@@ -534,7 +555,7 @@ $firstName = explode(' ', $user['name'])[0];
                         <span class="font-mono text-[11px] font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded">#${essay.id}</span>
                         ${isDraft ? `<span class="text-[10px] bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-black uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse inline-block"></span> Rascunho</span>` : ''}
                     </div>
-                    <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">${essay.student_name || 'Aluno'}</h3>
+                    <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">${esc(essay.student_name || 'Aluno')}</h3>
                     <p class="text-xs text-slate-400 mt-auto pt-4">${date}</p>
                 </div>`;
             }).join('');
@@ -792,7 +813,7 @@ $firstName = explode(' ', $user['name'])[0];
                     <span class="flex-shrink-0 w-6 h-6 rounded-full ${comp.bg} text-white text-[10px] font-black flex items-center justify-center mt-0.5">${i + 1}</span>
                     <div class="min-w-0 flex-1 pr-5">
                         <span class="text-[9px] font-black ${comp.text} uppercase">${comp.short}</span>
-                        <p class="text-xs text-slate-700 mt-0.5 leading-snug">${c.comment}</p>
+                        <p class="text-xs text-slate-700 mt-0.5 leading-snug">${esc(c.comment)}</p>
                     </div>
                     <button onclick="removeComment(${i})" class="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors text-xs">✕</button>
                 </div>`;
@@ -864,7 +885,7 @@ $firstName = explode(' ', $user['name'])[0];
                 allStudents = await res.json();
                 const select = document.getElementById('student-select');
                 select.innerHTML = '<option value="">Selecione um aluno da plataforma...</option>' +
-                    allStudents.map(s => `<option value="${s.id}">${s.name} (${s.email})</option>`).join('');
+                    allStudents.map(s => `<option value="${s.id}">${esc(s.name)} (${esc(s.email)})</option>`).join('');
             } catch {
                 /* silencia erros de lista de alunos */
             }
@@ -876,7 +897,7 @@ $firstName = explode(' ', $user['name'])[0];
                     activeClassId === c.id ? 'border-indigo-500 shadow-md' : 'border-slate-100 hover:border-slate-300'
                 } flex justify-between items-center group">
                     <div>
-                        <h4 class="font-bold text-slate-900">${c.name}</h4>
+                        <h4 class="font-bold text-slate-900">${esc(c.name)}</h4>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">${c.students.length} ALUNOS</p>
                     </div>
                     <button onclick="event.stopPropagation(); deleteClass(${c.id})" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity">🗑️</button>
@@ -942,8 +963,8 @@ $firstName = explode(' ', $user['name'])[0];
                 c.students.map(s => `
                     <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
                         <div>
-                            <p class="font-bold text-slate-800 text-sm">${s.name}</p>
-                            <p class="text-xs text-slate-500">${s.email}</p>
+                            <p class="font-bold text-slate-800 text-sm">${esc(s.name)}</p>
+                            <p class="text-xs text-slate-500">${esc(s.email)}</p>
                         </div>
                         <button onclick="removeStudent(${c.id}, ${s.id})" class="text-rose-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded bg-rose-50 hover:bg-rose-100 transition-colors">Remover</button>
                     </div>

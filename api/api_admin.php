@@ -1,11 +1,15 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/utils/session.php';
+require_once __DIR__ . '/utils/csrf.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $dbPath = __DIR__ . '/../database/db.php';
 if (!file_exists($dbPath)) { ob_clean(); http_response_code(500); echo json_encode(['error' => 'Arquivo db.php não encontrado.']); exit; }
 require_once $dbPath;
+
+start_secure_session();
+validate_csrf();
 
 // Apenas administradores podem acessar esta API
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -60,7 +64,8 @@ try {
         if ($stmt->fetch()) throw new Exception("Este e-mail já está cadastrado.");
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+        // Usuário criado por admin deve trocar a senha no primeiro acesso
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, must_change_password) VALUES (?, ?, ?, ?, 1)");
         $stmt->execute([$name, $email, $hashedPassword, $role]);
 
         ob_clean(); echo json_encode(['success' => 'Usuário cadastrado com sucesso!']);

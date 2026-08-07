@@ -1,11 +1,15 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/utils/session.php';
+require_once __DIR__ . '/utils/csrf.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $dbPath = __DIR__ . '/../database/db.php';
 if (!file_exists($dbPath)) { ob_clean(); http_response_code(500); echo json_encode(['error' => 'Arquivo db.php não encontrado.']); exit; }
 require_once $dbPath;
+
+start_secure_session();
+validate_csrf();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'teacher') {
     ob_clean(); http_response_code(403); echo json_encode(['error' => 'Acesso negado.']); exit;
@@ -39,6 +43,20 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
     if (!in_array($fileExt, ['jpg', 'jpeg', 'png', 'webp'])) {
         ob_clean(); http_response_code(400); echo json_encode(['error' => 'Formato de imagem inválido.']); exit;
     }
+    if ($_FILES['image']['size'] > 10 * 1024 * 1024) {
+        ob_clean(); http_response_code(400); echo json_encode(['error' => 'Imagem muito grande. Tamanho máximo: 10 MB.']); exit;
+    }
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($_FILES['image']['tmp_name']);
+    $mimeMap = [
+        'jpg'  => ['image/jpeg'],
+        'jpeg' => ['image/jpeg'],
+        'png'  => ['image/png'],
+        'webp' => ['image/webp'],
+    ];
+    if (!in_array($mime, $mimeMap[$fileExt], true)) {
+        ob_clean(); http_response_code(400); echo json_encode(['error' => 'Conteúdo da imagem inválido.']); exit;
+    }
     $fileName = uniqid('theme_') . '.' . $fileExt;
     if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)) {
         $imagePath = 'uploads/themes/' . $fileName; 
@@ -56,6 +74,13 @@ if (isset($_FILES['pdf']) && $_FILES['pdf']['error'] === UPLOAD_ERR_OK) {
     $fileExtPdf = strtolower(pathinfo($_FILES['pdf']['name'], PATHINFO_EXTENSION));
     if ($fileExtPdf !== 'pdf') {
         ob_clean(); http_response_code(400); echo json_encode(['error' => 'O material de apoio deve ser um arquivo PDF.']); exit;
+    }
+    if ($_FILES['pdf']['size'] > 10 * 1024 * 1024) {
+        ob_clean(); http_response_code(400); echo json_encode(['error' => 'PDF muito grande. Tamanho máximo: 10 MB.']); exit;
+    }
+    $finfoPdf = new finfo(FILEINFO_MIME_TYPE);
+    if ($finfoPdf->file($_FILES['pdf']['tmp_name']) !== 'application/pdf') {
+        ob_clean(); http_response_code(400); echo json_encode(['error' => 'Conteúdo do arquivo não é um PDF válido.']); exit;
     }
     $fileNamePdf = uniqid('theme_pdf_') . '.' . $fileExtPdf;
     if (move_uploaded_file($_FILES['pdf']['tmp_name'], $uploadDirPdf . $fileNamePdf)) {
@@ -102,5 +127,6 @@ try {
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     if($pdo->inTransaction()) $pdo->rollBack();
-    ob_clean(); http_response_code(500); echo json_encode(['error' => 'Erro: ' . $e->getMessage()]);
+    error_log('Erro ao salvar tema: ' . $e->getMessage());
+    ob_clean(); http_response_code(500); echo json_encode(['error' => 'Erro interno ao salvar o tema.']);
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Nova Senha - RedaçãoPro</title>
-    <link rel="stylesheet" href="./assets/css/tailwind.css">
+    <link rel="stylesheet" href="../../assets/css/tailwind.css">
     <style>
         .anim-up { animation: fadeUp 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
         .delay-100 { animation-delay: 100ms; }
@@ -97,8 +97,7 @@
             };
 
             try {
-                // Como este arquivo está na raiz, a API está em ./api/
-                const res = await fetch('./api/api_reset_password.php', {
+                const res = await fetch('../../api/api_reset_password.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

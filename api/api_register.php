@@ -1,11 +1,17 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/utils/session.php';
+require_once __DIR__ . '/utils/csrf.php';
+require_once __DIR__ . '/utils/rate_limit.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $dbPath = __DIR__ . '/../database/db.php';
 if (!file_exists($dbPath)) { ob_clean(); http_response_code(500); echo json_encode(['error' => 'Arquivo de banco de dados não encontrado.']); exit; }
 require_once $dbPath;
+
+start_secure_session();
+validate_csrf();
+rate_limit_check('register', 10, 3600); // máx. 10 cadastros por IP/hora
 
 // Recebe os dados em formato JSON do fetch
 $data = json_decode(file_get_contents('php://input'), true);

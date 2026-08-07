@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role === 'student') header('Location: student_dashboard.php');
@@ -76,6 +77,18 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
     <script>
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
@@ -102,7 +115,9 @@ if (isset($_SESSION['user'])) {
                 const data = await res.json();
 
                 if (res.ok) {
-                    if (data.role === 'student') window.location.href = 'student_dashboard.php';
+                    if (data.must_change_password) {
+                        window.location.href = 'change_password.php';
+                    } else if (data.role === 'student') window.location.href = 'student_dashboard.php';
                     else if (data.role === 'teacher') window.location.href = 'teacher_dashboard.php';
                     else if (data.role === 'admin') window.location.href = 'admin.php';
                 } else {

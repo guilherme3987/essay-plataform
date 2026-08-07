@@ -1,7 +1,13 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     header('Location: login.php');
+    exit;
+}
+// Força troca de senha no primeiro acesso
+if (!empty($_SESSION['user']['must_change_password'])) {
+    header('Location: change_password.php');
     exit;
 }
 $user = $_SESSION['user'];
@@ -142,6 +148,21 @@ $firstName = explode(' ', $user['name'])[0];
     </main>
 
     <script>
+        // Segurança: token CSRF injetado pelo servidor
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         const showToast = (msg, type = 'info') => {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -179,10 +200,13 @@ $firstName = explode(' ', $user['name'])[0];
             'admin': '<span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest">Admin</span>'
         };
 
+        let currentUsers = [];
+
         async function loadUsers() {
             try {
                 const res = await fetch('../api/api_admin.php?action=get_users');
                 const users = await res.json();
+                currentUsers = users;
                 
                 const tbody = document.getElementById('users-table');
                 if(users.length === 0) {
@@ -194,12 +218,12 @@ $firstName = explode(' ', $user['name'])[0];
                     const date = new Date(u.created_at).toLocaleDateString('pt-BR');
                     return `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-bold text-slate-900 text-sm">${u.name}</td>
-                        <td class="px-6 py-4 text-slate-500 text-sm">${u.email}</td>
+                        <td class="px-6 py-4 font-bold text-slate-900 text-sm">${esc(u.name)}</td>
+                        <td class="px-6 py-4 text-slate-500 text-sm">${esc(u.email)}</td>
                         <td class="px-6 py-4">${roleLabels[u.role]}</td>
                         <td class="px-6 py-4 text-slate-400 text-sm font-medium">${date}</td>
                         <td class="px-6 py-4 text-right">
-                            <button onclick="deleteUser(${u.id}, '${u.name}')" class="text-rose-500 hover:bg-rose-100 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors">
+                            <button onclick="deleteUser(${u.id})" class="text-rose-500 hover:bg-rose-100 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors">
                                 Excluir
                             </button>
                         </td>
@@ -208,7 +232,9 @@ $firstName = explode(' ', $user['name'])[0];
             } catch (e) { showToast('Erro ao carregar usuários', 'error'); }
         }
 
-        window.deleteUser = async (id, name) => {
+        window.deleteUser = async (id) => {
+            const user = currentUsers.find(u => u.id === id);
+            const name = user ? user.name : 'este usuário';
             if(!confirm(`⚠️ ATENÇÃO: Deseja realmente excluir o usuário ${name}?\nIsso apagará todas as redações e temas vinculados a ele!`)) return;
             try {
                 const res = await fetch('../api/api_admin.php', {

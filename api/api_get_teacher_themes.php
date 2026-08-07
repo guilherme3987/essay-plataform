@@ -1,6 +1,8 @@
 <?php
-ob_start(); session_start(); header('Content-Type: application/json; charset=utf-8');
+ob_start(); require_once __DIR__ . '/utils/session.php'; header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../database/db.php';
+
+start_secure_session();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'teacher') {
     ob_clean(); http_response_code(403); exit;

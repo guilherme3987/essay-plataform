@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 if (isset($_SESSION['user'])) {
     $role = $_SESSION['user']['role'];
     if ($role === 'student') header('Location: student_dashboard.php');
@@ -56,6 +57,18 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <script>
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         const showToast = (msg, type = 'info') => {
             const toast = document.getElementById('toast');
             toast.textContent = msg;

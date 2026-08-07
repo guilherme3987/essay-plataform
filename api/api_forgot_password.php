@@ -3,7 +3,14 @@ ob_start();
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../database/db.php';
-require_once __DIR__ . '/utils/Mailer.php'; // Sua nova classe de e-mail
+require_once __DIR__ . '/utils/Mailer.php';
+require_once __DIR__ . '/utils/session.php';
+require_once __DIR__ . '/utils/csrf.php';
+require_once __DIR__ . '/utils/rate_limit.php';
+
+start_secure_session();
+validate_csrf();
+rate_limit_check('forgot_password', 5, 3600); // máx. 5 solicitações por IP/hora
 
 $data = json_decode(file_get_contents('php://input'), true);
 $email = trim($data['email'] ?? '');
@@ -32,8 +39,12 @@ try {
         // 4. Dispara o e-mail
         $mailer = new Mailer();
         
-        // Ajuste localhost:8000 para o seu domínio em produção futuramente
-        $resetLink = "http://localhost:8000/pages/auth/reset_password.php?token=" . $token;
+        // Monta o link de reset usando HTTPS quando disponível
+        $isHttps = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+            || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+        $scheme = $isHttps ? 'https' : 'http';
+        $host = getenv('APP_HOST') ?: ($_SERVER['HTTP_HOST'] ?? 'localhost:8000');
+        $resetLink = "$scheme://$host/pages/auth/reset_password.php?token=" . $token;
         $firstName = explode(' ', $user['name'])[0];
 
         $corpoEmail = "

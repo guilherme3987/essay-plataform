@@ -1,8 +1,14 @@
 <?php
-session_start();
+require_once __DIR__ . '/../api/utils/session.php';
+start_secure_session();
 // Proteção da rota
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'student') {
     header('Location: login.php');
+    exit;
+}
+// Força troca de senha no primeiro acesso
+if (!empty($_SESSION['user']['must_change_password'])) {
+    header('Location: change_password.php');
     exit;
 }
 $user = $_SESSION['user'];
@@ -112,7 +118,7 @@ $firstName = explode(' ', $user['name'])[0];
                     <p id="modal-theme-date" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-3">DATA AQUI</p>
                     <h2 id="modal-theme-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-8">Título</h2>
                     <img id="modal-theme-img" src="" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
-                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap mb-8"></div>
+                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base break-words mb-8"></div>
                     
                     <div id="modal-theme-pdf-container" class="hidden border-t border-slate-200 pt-6"></div>
 
@@ -173,6 +179,21 @@ $firstName = explode(' ', $user['name'])[0];
     </main>
 
     <script>
+        // Segurança: token CSRF injetado pelo servidor
+        const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
+
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
         // MANTENDO A LÓGICA ORIGINAL DO JAVASCRIPT INTACTA
         const COMPETENCIES = [
             { id: 1, short: 'C1', title: 'Modalidade Escrita Formal', bg: 'bg-blue-500', light: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', bar: 'bg-blue-500', stroke: 'rgba(59,130,246,0.70)', hex: '#3b82f6' },
@@ -242,11 +263,11 @@ $firstName = explode(' ', $user['name'])[0];
 
                 return `
                 <div onclick="openThemeModal(${i})" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full">
-                    ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="../api/${t.image_path}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
+                    ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="../api/${esc(t.image_path)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
                     <div class="p-6 flex flex-col flex-1">
                         <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">${date}</p>
-                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${t.title}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-3 mt-auto">${t.content}</p>
+                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${esc(t.title)}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-3 mt-auto">${esc(t.content)}</p>
                         ${pdfBadge}
                     </div>
                 </div>`;
@@ -259,7 +280,8 @@ $firstName = explode(' ', $user['name'])[0];
             
             document.getElementById('modal-theme-date').textContent = `PUBLICADO EM ${date}`;
             document.getElementById('modal-theme-title').textContent = t.title;
-            document.getElementById('modal-theme-content').textContent = t.content;
+            const contentEl = document.getElementById('modal-theme-content');
+            contentEl.textContent = t.content;
             
             const imgEl = document.getElementById('modal-theme-img');
             if (t.image_path) {
@@ -273,7 +295,7 @@ $firstName = explode(' ', $user['name'])[0];
             const pdfContainer = document.getElementById('modal-theme-pdf-container');
             if (t.pdf_path) {
                 pdfContainer.innerHTML = `
-                    <a href="../api/${t.pdf_path}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-3 px-6 rounded-xl transition-colors duration-200">
+                    <a href="../api/${esc(t.pdf_path)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-3 px-6 rounded-xl transition-colors duration-200">
                         <span class="text-xl">📄</span>
                         <span class="text-xs uppercase tracking-widest">Abrir Material de Apoio (PDF)</span>
                     </a>
@@ -417,7 +439,7 @@ $firstName = explode(' ', $user['name'])[0];
                 
                 compComments.forEach(c => {
                     const globalIdx = comments.indexOf(c) + 1;
-                    groupedComments += `<div class="flex gap-3 p-3 mb-1 ${comp.light} border ${comp.border} rounded-xl"><span class="flex-shrink-0 w-5 h-5 ${comp.bg} text-white font-bold rounded-full flex items-center justify-center text-[9px]">${globalIdx}</span><p class="text-slate-700 text-sm leading-relaxed">${c.comment}</p></div>`;
+                    groupedComments += `<div class="flex gap-3 p-3 mb-1 ${comp.light} border ${comp.border} rounded-xl"><span class="flex-shrink-0 w-5 h-5 ${comp.bg} text-white font-bold rounded-full flex items-center justify-center text-[9px]">${globalIdx}</span><p class="text-slate-700 text-sm leading-relaxed">${esc(c.comment)}</p></div>`;
                     
                     if(c.excerpt) {
                         const pts = JSON.parse(c.excerpt);
