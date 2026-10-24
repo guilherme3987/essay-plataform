@@ -91,11 +91,39 @@ mysql -u root -p < database/init.sql
 
 O arquivo `init.sql` cria automaticamente o banco `redacaopro`, suas tabelas e chaves estrangeiras.
 
+### 3.1 Seed Inicial (Recomendado)
+
+Para população inicial com usuários de teste, execute:
+
+```bash
+# Criar ambiente virtual (obrigatório)
+python3 -m venv venv
+
+# Ativar ambiente virtual
+. venv/bin/activate
+
+# Instalar dependência necessária
+pip install pymysql
+
+# Executar seeder (cria admin, professor e aluno)
+cd seeder
+python3 seed.py
+```
+
+O script criará os seguintes usuários com credenciais de login:
+
+* **Administrador:** `admin@redacaopro.local` / `Password@123` (role: `admin`)
+* **Professor:** `professor@redacaopro.local` / `Password@123` (role: `teacher`)
+* **Aluno:** `aluno@redacaopro.local` / `Password@123` (role: `student`)
+
+**Informações de Login:**
+Todos os usuários podem fazer login imediatamente usando os e-mails e senhas acima. Essas contas não exigem troca de senha no primeiro acesso.
+
+> **Importante:** O seeder usa hashes bcrypt pré-gerados (compatíveis com PHP) e insere no banco `redacaopro`. Pode ser executado novamente: ele atualiza apenas as contas de teste pelos e-mails acima e preserva os demais usuários.
+
 ---
 
 ### 4. Configure as credenciais do banco
-
-O arquivo `database/db.php` utiliza as variáveis de ambiente abaixo.
 
 Valores padrão:
 
@@ -108,6 +136,7 @@ Configure:
 
 ```bash
 export DB_HOST=127.0.0.1
+export DB_PORT=3307 # use 3307 when connecting to MySQL exposed by Docker Compose
 export DB_NAME=redacaopro
 export DB_USER=root
 export DB_PASS=root

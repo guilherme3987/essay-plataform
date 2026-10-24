@@ -76,6 +76,7 @@ if (isset($_SESSION['user'])) {
             </form>
         </div>
     </div>
+            </form>
     <script>
         const CSRF_TOKEN = <?= json_encode(csrf_token()) ?>;
 
@@ -132,7 +133,66 @@ if (isset($_SESSION['user'])) {
                 btn.textContent = 'ACESSAR PLATAFORMA';
             }
         });
-    </script>
+    
+        const teacherModal = document.getElementById('teacher-modal');
+        document.getElementById('open-teacher-register').addEventListener('click', () => {
+            teacherModal.classList.remove('hidden');
+        });
+        document.getElementById('close-teacher-modal').addEventListener('click', () => {
+            teacherModal.classList.add('hidden');
+        });
+        teacherModal.addEventListener('click', (e) => {
+            if (e.target === teacherModal) teacherModal.classList.add('hidden');
+        });
+
+        document.getElementById('teacher-register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('teacher-submit-btn');
+            const errorBox = document.getElementById('teacher-error-box');
+            const password = document.getElementById('teacher-password').value;
+            const confirmPassword = document.getElementById('teacher-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                document.getElementById('teacher-error-msg').textContent = 'As senhas não coincidem.';
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'CRIANDO CONTA...';
+            errorBox.classList.add('hidden');
+
+            const payload = {
+                name: document.getElementById('teacher-name').value,
+                email: document.getElementById('teacher-email').value,
+                password: password,
+                role: 'teacher'
+            };
+
+            try {
+                const res = await fetch('../api/api_register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Conta de professor criada com sucesso! Faça login.');
+                    teacherModal.classList.add('hidden');
+                    document.getElementById('teacher-register-form').reset();
+                } else {
+                    document.getElementById('teacher-error-msg').textContent = data.error || 'Erro ao criar conta.';
+                    errorBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                document.getElementById('teacher-error-msg').textContent = 'Erro de conexão com o servidor.';
+                errorBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'CADASTRAR PROFESSOR';
+            }
+        });
+</script>
 </body>
 
 </html>

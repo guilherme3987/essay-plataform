@@ -79,6 +79,13 @@ if (isset($_SESSION['user'])) {
                             </div>
                         </label>
 
+                        <label class="cursor-pointer" onclick="selectRole(this)">
+                            <input type="radio" name="role" value="teacher" class="peer sr-only appearance-none">
+                            <div class="role-card p-4 rounded-xl border-2 border-slate-200 text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]">
+                                <span class="text-2xl mb-1 block">👨‍🏫</span>
+                                <span class="role-label text-xs font-bold text-slate-600 uppercase tracking-widest">Professor</span>
+                            </div>
+                        </label>
                     </div>
 
                     <script>

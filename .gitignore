@@ -20,3 +20,5 @@ vendor/
 uploads/
 node_modules/
 
+# Venv
+venv/
