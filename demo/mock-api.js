@@ -1,5 +1,5 @@
 // Camada de dados da demonstração RedaçãoPro.
-// Não há banco, login nem servidor: os dados vivem apenas no localStorage deste navegador.
+// Camada de dados locais da demonstração RedaçãoPro.
 // As páginas continuam chamando ../api/api_*.php; esta camada intercepta essas chamadas.
 (function () {
   'use strict';
@@ -16,7 +16,7 @@
 
   function setProfile(role) {
     if (!PROFILES[role]) return;
-    try { localStorage.setItem(PROFILE_KEY, role); } catch (e) { /* navegador sem storage */ }
+    try { localStorage.setItem(PROFILE_KEY, role); } catch (e) { /* armazenamento indisponível */ }
   }
 
   function profile() {
@@ -251,7 +251,7 @@
       const h = H[m[1]];
       if (!h) throw new HttpError(503, 'Recurso indisponível na versão de demonstração.');
       const out = await h(c);
-      if (c.dirty && !save(c.db)) throw new HttpError(507, 'Armazenamento do navegador cheio. Use "Resetar demo".');
+      if (c.dirty && !save(c.db)) throw new HttpError(507, 'Não foi possível salvar as alterações. Reinicie o caderno e tente novamente.');
       return json(out);
     } catch (e) {
       if (e instanceof HttpError) return json({ error: e.message }, e.status);
@@ -260,7 +260,7 @@
     }
   };
 
-  // ---- navegação por perfil (substitui login/logout) ----
+  // ---- navegação por perfil ----
   function targetPage(role) {
     const cfg = PROFILES[role];
     if (!cfg) return 'index.html';
@@ -289,7 +289,7 @@
     if (anchor && !document.getElementById('profile-switcher')) {
       const select = document.createElement('select');
       select.id = 'profile-switcher';
-      select.title = 'Trocar perfil da demonstração (sem login)';
+      select.title = 'Trocar perfil';
       select.style.cssText = 'background:#f8f6f1;color:#1a1a1a;border:1px solid rgba(26,26,26,.25);border-radius:0;padding:4px 8px;font:500 10px "DM Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;outline:none;cursor:pointer';
       select.innerHTML = Object.keys(PROFILES).map(r => `<option value="${r}">${PROFILES[r].label}</option>`).join('');
       select.value = profile();
@@ -299,12 +299,12 @@
 
     const pill = document.createElement('div');
     pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;background:#1a1a1a;color:#98d4bb;border:1px solid rgba(152,212,187,.35);font:500 11px "DM Sans",sans-serif;letter-spacing:.04em;padding:8px 12px;border-radius:0;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 24px)';
-    pill.innerHTML = '<span>DEMO · sem login · dados só neste navegador</span>';
+    pill.innerHTML = '<span>Demonstração · caderno interativo</span>';
     const rb = document.createElement('button');
     rb.type = 'button';
-    rb.textContent = 'Resetar demo';
+    rb.textContent = 'Reiniciar';
     rb.style.cssText = 'background:#f4b8c5;color:#1a1a1a;border:0;border-radius:0;padding:4px 10px;font:inherit;font-weight:600;cursor:pointer';
-    rb.onclick = () => { if (confirm('Apagar tudo e voltar aos dados iniciais da demo?')) window.demoReset(); };
+    rb.onclick = () => { if (confirm('Reiniciar o caderno e voltar ao estado inicial?')) window.demoReset(); };
     pill.appendChild(rb);
     document.body.appendChild(pill);
   });

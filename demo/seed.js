@@ -1,5 +1,5 @@
-// Dados iniciais da demonstração RedaçãoPro. Sem banco e sem login.
-// Use o botão "Resetar demo" para voltar a este estado.
+// Dados iniciais da demonstração RedaçãoPro.
+// Use o botão "Reiniciar" para voltar a este estado.
 (function () {
   // Gera uma marcação retangular (em %) sobre as linhas l1..l2 da folha de redação (imagem 720x807).
   const W = 720, H = 807, Y0 = 20, P = 25.07;

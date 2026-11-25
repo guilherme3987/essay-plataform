@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RedaçãoPro · Caderno de correções</title>
-    <meta name="description" content="Demonstração interativa da RedaçãoPro: temas por turma, envio de redações em imagem, correção por competências e espelho do aluno. Sem login, sem servidor e sem banco de dados.">
+    <meta name="description" content="RedaçãoPro: temas por turma, envio de redações em imagem, correção por competências e espelho do aluno em um caderno editorial.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="RedaçãoPro · Caderno de correções">
-    <meta property="og:description" content="Do tema ao espelho da correção em um caderno só. Explore a demonstração sem login e sem banco de dados.">
+    <meta property="og:description" content="Do tema ao espelho da correção em um caderno só. Conheça a RedaçãoPro.">
     <meta property="og:url" content="https://guilherme3987.github.io/essay-plataform/">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="assets/css/tailwind.css">
@@ -68,11 +68,11 @@
         <section class="nb-section nb-on-dark" id="inicio">
             <div class="nb-wrap nb-hero-grid">
                 <div>
-                    <p class="nb-eyebrow nb-reveal">Ambiente de demonstração · sem login</p>
+                    <p class="nb-eyebrow nb-reveal">Caderno editorial de redações</p>
                     <h1 class="nb-display nb-reveal nb-reveal--1">Do tema ao espelho da correção, em um caderno só.</h1>
                     <p class="nb-lead nb-reveal nb-reveal--2">
                         A RedaçãoPro reúne temas por turma, envio em imagem, marcação de trechos e notas por competência.
-                        Aqui você percorre o fluxo inteiro sem senha, sem servidor e sem banco de dados — tudo fica neste navegador.
+                        Acompanhe a proposta publicada, envie sua redação e receba a correção com apontamentos claros sobre cada trecho.
                     </p>
                     <div class="nb-reveal nb-reveal--3" style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem">
                         <button type="button" class="nb-btn nb-btn--accent" onclick="demoSelectProfile('student')">
@@ -81,7 +81,7 @@
                         <a class="nb-btn nb-btn--ghost" href="#roteiro">Ver roteiro</a>
                     </div>
                     <p class="nb-muted nb-reveal nb-reveal--4" style="font-size:.75rem;margin-top:1.25rem">
-                        Dados locais · use “Resetar demo” para recomeçar.
+                        Use “Reiniciar caderno” para voltar ao ponto de partida.
                     </p>
                 </div>
 
@@ -205,7 +205,7 @@
                     </article>
                     <article class="nb-card nb-quote nb-reveal nb-reveal--2">
                         <svg class="nb-muted" style="width:26px;height:26px;color:var(--tab-lavender)" aria-hidden="true"><use href="#i-quote"/></svg>
-                        <blockquote>“Sem login e sem servidor, dá para mostrar o ciclo completo da correção em poucos minutos.”</blockquote>
+                        <blockquote>“Em poucos minutos dá para acompanhar o ciclo completo: o tema chega, a redação é enviada e a correção volta com apontamentos.”</blockquote>
                         <div class="nb-quote__who"><span class="nb-avatar nb-avatar--pink">CV</span><div><strong>Coordenação</strong><span>Validação do produto</span></div></div>
                     </article>
                 </div>
@@ -216,7 +216,7 @@
             <p class="nb-eyebrow">Planos de demonstração</p>
             <h2 class="nb-h2">Escolha seu caderno.</h2>
             <p class="nb-muted" style="max-width:62ch;margin-top:1rem">
-                Os três perfis usam os mesmos dados locais. Entrar como professor, aluno ou administrador apenas muda o ponto de vista sobre o fluxo.
+                Os três perfis mostram o mesmo fluxo sob pontos de vista diferentes. Escolha o caderno do aluno, do professor ou da gestão.
             </p>
 
             <div class="nb-plans" style="margin-top:3.5rem">
@@ -224,7 +224,7 @@
                     <p class="nb-eyebrow" style="color:#3f8f72">Aluno</p>
                     <h3 class="nb-h3">Caderno do aluno</h3>
                     <p class="nb-plan__price">R$ 0</p>
-                    <p class="nb-plan__note">Demonstração aberta, sem cartão.</p>
+                    <p class="nb-plan__note">Acesso imediato ao caderno.</p>
                     <ul class="nb-card__list">
                         <li><svg style="width:14px;height:14px;color:#3f8f72" aria-hidden="true"><use href="#i-check"/></svg> Temas publicados por turma</li>
                         <li><svg style="width:14px;height:14px;color:#3f8f72" aria-hidden="true"><use href="#i-check"/></svg> Envio da redação em imagem</li>
@@ -267,11 +267,11 @@
                 <p class="nb-eyebrow" style="color:#6f56a0">Última página</p>
                 <h2 class="nb-display" style="font-size:clamp(2rem,4vw,3rem)">Abra o caderno e comece pela primeira página.</h2>
                 <p class="nb-muted" style="max-width:60ch;margin:1.25rem auto 0">
-                    Todo o progresso da demonstração vive no armazenamento deste navegador. O reset devolve os dados iniciais quando você quiser repetir o roteiro.
+                    Você pode percorrer o roteiro quantas vezes quiser. O botão “Reiniciar caderno” devolve tudo ao estado inicial.
                 </p>
                 <div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:2rem">
                     <button type="button" class="nb-btn nb-btn--dark" onclick="document.getElementById('perfis').scrollIntoView({behavior:'smooth'})">Escolher perfil</button>
-                    <button type="button" class="nb-btn nb-btn--ink" onclick="demoReset()">Resetar demo</button>
+                    <button type="button" class="nb-btn nb-btn--ink" onclick="demoReset()">Reiniciar caderno</button>
                 </div>
             </div>
         </section>
@@ -320,11 +320,11 @@
             <div class="nb-legal" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem;border-top:1px solid rgba(248,246,241,.1)">
                 <div id="privacidade">
                     <h4>Privacidade</h4>
-                    <p style="font-size:.8125rem;margin:0">Esta demonstração não envia dados a servidores. Os registros ficam apenas no armazenamento local do navegador e podem ser apagados pelo botão “Resetar demo”.</p>
+                    <p style="font-size:.8125rem;margin:0">Os registros desta demonstração ficam no seu dispositivo e podem ser apagados a qualquer momento pelo botão “Reiniciar caderno”.</p>
                 </div>
                 <div id="termos">
                     <h4>Termos de uso</h4>
-                    <p style="font-size:.8125rem;margin:0">Os perfis, redações e notas exibidos são fictícios e servem somente para validação da experiência. Nenhum dado é coletado.</p>
+                    <p style="font-size:.8125rem;margin:0">Os perfis, redações e notas exibidos são fictícios e servem somente para demonstrar a experiência de correção.</p>
                 </div>
             </div>
 
