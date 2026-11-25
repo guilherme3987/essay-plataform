@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="ttl">
+  <title id="ttl">Ilustração do tema: democratização do acesso ao cinema no Brasil</title>
+  <defs>
+    <pattern id="lines" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M0 31.5H32" stroke="#2d2d2d" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="400" fill="#f8f6f1"/>
+  <rect width="640" height="400" fill="url(#lines)"/>
+  <rect x=".5" y=".5" width="639" height="399" fill="none" stroke="#1a1a1a" stroke-opacity=".16"/>
+
+  <g fill="#2d2d2d" opacity=".85">
+    <circle cx="22" cy="88" r="7"/>
+    <circle cx="22" cy="200" r="7"/>
+    <circle cx="22" cy="312" r="7"/>
+  </g>
+
+  <circle cx="320" cy="196" r="118" fill="#ffe6a7" opacity=".72"/>
+
+  <rect x="196" y="108" width="248" height="148" rx="8" fill="#2d2d2d"/>
+  <rect x="208" y="120" width="224" height="124" rx="3" fill="#f8f6f1"/>
+  <path d="M320 130 262 236h116Z" fill="#c7b8ea" opacity=".55"/>
+
+  <g fill="#f8f6f1" opacity=".85">
+    <rect x="214" y="114" width="12" height="6" rx="2"/>
+    <rect x="246" y="114" width="12" height="6" rx="2"/>
+    <rect x="278" y="114" width="12" height="6" rx="2"/>
+    <rect x="310" y="114" width="12" height="6" rx="2"/>
+    <rect x="342" y="114" width="12" height="6" rx="2"/>
+    <rect x="374" y="114" width="12" height="6" rx="2"/>
+    <rect x="406" y="114" width="12" height="6" rx="2"/>
+    <rect x="214" y="244" width="12" height="6" rx="2"/>
+    <rect x="246" y="244" width="12" height="6" rx="2"/>
+    <rect x="278" y="244" width="12" height="6" rx="2"/>
+    <rect x="310" y="244" width="12" height="6" rx="2"/>
+    <rect x="342" y="244" width="12" height="6" rx="2"/>
+    <rect x="374" y="244" width="12" height="6" rx="2"/>
+    <rect x="406" y="244" width="12" height="6" rx="2"/>
+  </g>
+
+  <path d="m320 156 8 18 20 2-15 13 4 20-17-10-17 10 4-20-15-13 20-2Z"
+        fill="#f4b8c5" stroke="#2d2d2d" stroke-width="3.5" stroke-linejoin="round"/>
+
+  <g fill="none" stroke="#2d2d2d" stroke-width="7" stroke-linecap="round">
+    <path d="M226 304v-28c0-11 8-19 18-19s18 8 18 19v28"/>
+    <path d="M292 304v-28c0-11 8-19 18-19s18 8 18 19v28"/>
+    <path d="M358 304v-28c0-11 8-19 18-19s18 8 18 19v28"/>
+  </g>
+
+  <path d="M600 96h32a8 8 0 0 1 8 8v124a8 8 0 0 1-8 8h-32Z" fill="#ffe6a7"/>
+  <text transform="translate(628 233) rotate(-90)" text-anchor="middle" font-family="'Comic Sans MS', cursive" font-size="13" letter-spacing="3" fill="#1a1a1a">TEMA 04</text>
+</svg>

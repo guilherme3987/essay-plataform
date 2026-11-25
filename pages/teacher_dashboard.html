@@ -380,7 +380,7 @@
                 return `
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:border-indigo-300 transition-colors duration-300 group">
                     ${t.image_path
-                        ? `<img src="${esc(assetUrl(t.image_path))}" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">`
+                        ? `<img src="${esc(assetUrl(t.image_path))}" alt="Ilustração do tema: ${esc(t.title)}" loading="lazy" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">`
                         : `<div class="w-full sm:w-32 h-24 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100"><svg class="w-8 h-8 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/><path d="M13.5 7.5 16.5 10.5"/></svg></div>`
                     }
                     <div class="flex-1 min-w-0 w-full">

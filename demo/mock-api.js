@@ -1,5 +1,4 @@
 // Camada de dados da demonstração RedaçãoPro.
-// Camada de dados locais da demonstração RedaçãoPro.
 // As páginas continuam chamando ../api/api_*.php; esta camada intercepta essas chamadas.
 (function () {
   'use strict';
@@ -29,10 +28,23 @@
   // A página declara DEMO_ROLE; isso apenas escolhe o perfil da demonstração, não autentica ninguém.
   if (window.DEMO_ROLE && PROFILES[window.DEMO_ROLE]) setProfile(window.DEMO_ROLE);
 
+  // Recupera as ilustrações dos temas originais em cadernos já iniciados.
+  function hydrateThemeImages(d) {
+    const seeded = (window.DEMO_SEED && window.DEMO_SEED.themes) || [];
+    let changed = false;
+    (d.themes || []).forEach(t => {
+      if (t.image_path) return;
+      const s = seeded.find(x => x.id === t.id);
+      if (s && s.image_path) { t.image_path = s.image_path; changed = true; }
+    });
+    if (changed) save(d);
+    return d;
+  }
+
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(DB_KEY));
-      if (d && Array.isArray(d.users)) return d;
+      if (d && Array.isArray(d.users)) return hydrateThemeImages(d);
     } catch (e) { /* storage inválido: recria a demo */ }
     const d = JSON.parse(JSON.stringify(window.DEMO_SEED));
     try { localStorage.setItem(DB_KEY, JSON.stringify(d)); } catch (e) { /* ignore */ }
@@ -290,7 +302,7 @@
       const select = document.createElement('select');
       select.id = 'profile-switcher';
       select.title = 'Trocar perfil';
-      select.style.cssText = 'background:#f8f6f1;color:#1a1a1a;border:1px solid rgba(26,26,26,.25);border-radius:0;padding:4px 8px;font:500 10px "DM Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;outline:none;cursor:pointer';
+      select.style.cssText = 'background:#f8f6f1;color:#1a1a1a;border:1px solid rgba(26,26,26,.25);border-radius:0;padding:4px 8px;font:400 12px "Patrick Hand","Comic Sans MS",cursive;letter-spacing:.05em;text-transform:uppercase;outline:none;cursor:pointer';
       select.innerHTML = Object.keys(PROFILES).map(r => `<option value="${r}">${PROFILES[r].label}</option>`).join('');
       select.value = profile();
       select.addEventListener('change', () => window.demoSwitchProfile(select.value));
@@ -298,7 +310,7 @@
     }
 
     const pill = document.createElement('div');
-    pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;background:#1a1a1a;color:#98d4bb;border:1px solid rgba(152,212,187,.35);font:500 11px "DM Sans",sans-serif;letter-spacing:.04em;padding:8px 12px;border-radius:0;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 24px)';
+    pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;background:#1a1a1a;color:#98d4bb;border:1px solid rgba(152,212,187,.35);font:400 13px "Patrick Hand","Comic Sans MS",cursive;letter-spacing:.03em;padding:8px 12px;border-radius:0;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 24px)';
     pill.innerHTML = '<span>Demonstração · caderno interativo</span>';
     const rb = document.createElement('button');
     rb.type = 'button';

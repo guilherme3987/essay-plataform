@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="ttl">
+  <title id="ttl">Ilustração do tema: trabalho de cuidado realizado pela mulher</title>
+  <defs>
+    <pattern id="lines" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M0 31.5H32" stroke="#2d2d2d" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="400" fill="#f8f6f1"/>
+  <rect width="640" height="400" fill="url(#lines)"/>
+  <rect x=".5" y=".5" width="639" height="399" fill="none" stroke="#1a1a1a" stroke-opacity=".16"/>
+
+  <g fill="#2d2d2d" opacity=".85">
+    <circle cx="22" cy="88" r="7"/>
+    <circle cx="22" cy="200" r="7"/>
+    <circle cx="22" cy="312" r="7"/>
+  </g>
+
+  <circle cx="320" cy="196" r="118" fill="#98d4bb" opacity=".62"/>
+
+  <path d="M320 262c-58-38-86-66-86-98 0-28 20-48 46-48 17 0 31 9 40 22 9-13 23-22 40-22 26 0 46 20 46 48 0 32-28 60-86 98Z"
+        fill="#f4b8c5" stroke="#2d2d2d" stroke-width="5" stroke-linejoin="round"/>
+
+  <circle cx="320" cy="166" r="14" fill="#2d2d2d"/>
+  <path d="M296 208c3-18 11-28 24-28s21 10 24 28Z" fill="#2d2d2d"/>
+  <circle cx="356" cy="190" r="9" fill="#2d2d2d"/>
+  <path d="M341 216c2-12 7-19 15-19s13 7 15 19Z" fill="#2d2d2d"/>
+
+  <path d="M212 250c24 34 64 54 108 54s84-20 108-54"
+        fill="none" stroke="#2d2d2d" stroke-width="11" stroke-linecap="round"/>
+  <path d="M238 284c18 17 48 28 82 28" fill="none" stroke="#c7b8ea" stroke-width="10" stroke-linecap="round"/>
+  <path d="M402 284c-18 17-48 28-82 28" fill="none" stroke="#c7b8ea" stroke-width="10" stroke-linecap="round"/>
+
+  <path d="M500 116h32M516 100v32" stroke="#2d2d2d" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+  <circle cx="186" cy="316" r="5" fill="#c7b8ea" stroke="#2d2d2d" stroke-width="2.5"/>
+
+  <path d="M600 96h32a8 8 0 0 1 8 8v124a8 8 0 0 1-8 8h-32Z" fill="#98d4bb"/>
+  <text transform="translate(628 233) rotate(-90)" text-anchor="middle" font-family="'Comic Sans MS', cursive" font-size="13" letter-spacing="3" fill="#1a1a1a">TEMA 01</text>
+</svg>

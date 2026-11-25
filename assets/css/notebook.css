@@ -2,17 +2,17 @@
    Camada visual editorial aplicada sobre o CSS compilado. */
 
 @font-face {
-  font-family: 'Bodoni Moda';
-  src: url('../fonts/bodoni-moda-latin.woff2') format('woff2');
+  font-family: 'Caveat';
+  src: url('../fonts/caveat-latin.woff2') format('woff2');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'DM Sans';
-  src: url('../fonts/dm-sans-latin.woff2') format('woff2');
-  font-weight: 400 600;
+  font-family: 'Patrick Hand';
+  src: url('../fonts/patrick-hand-latin.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -26,8 +26,8 @@
   --tab-pink: #f4b8c5;
   --tab-sky: #a8d8ea;
   --tab-cream: #ffe6a7;
-  --font-display: 'Bodoni Moda', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Caveat', 'Comic Sans MS', cursive;
+  --font-body: 'Patrick Hand', 'Comic Sans MS', cursive;
   --tab-font-size: clamp(0.5rem, 1vh, 0.7rem);
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -63,26 +63,26 @@ body.nb-root {
 .nb-eyebrow {
   margin: 0 0 0.75rem;
   font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--tab-mint);
 }
 .nb-display {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.04;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: 0;
+  line-height: 1.1;
+  font-size: clamp(2.75rem, 5.2vw, 4.25rem);
   margin: 0;
 }
 .nb-h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.015em;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  line-height: 1.12;
+  letter-spacing: 0;
+  font-size: clamp(1.9rem, 3.2vw, 2.5rem);
+  line-height: 1.18;
   margin: 0;
 }
 .nb-h3 {
@@ -346,10 +346,78 @@ body.nb-root {
 .nb-reveal--4 { animation-delay: 320ms; }
 
 /* Painéis: aplica a mesma paleta sem reescrever os utilitários existentes. */
-body.notebook-app { background: var(--bg-outer); font-family: var(--font-body); color: var(--text-primary); }
+body.notebook-app { background: var(--bg-outer); font-family: var(--font-body); color: var(--bg-page); }
+.notebook-app main {
+  position: relative;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  margin-block: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(2.25rem, 4vw, 3rem) !important;
+}
+.notebook-app main::before {
+  content: '';
+  position: absolute;
+  left: 0.7rem;
+  top: 2rem;
+  bottom: 2rem;
+  width: 12px;
+  background-image: radial-gradient(circle at center, var(--bg-outer) 5px, transparent 6px);
+  background-size: 12px 56px;
+  background-repeat: repeat-y;
+  pointer-events: none;
+}
+/* Campos e modal sobre papel creme: nunca herdam a cor clara do fundo escuro. */
+.notebook-app input,
+.notebook-app textarea,
+.notebook-app select { color: var(--text-primary) !important; }
+.notebook-app .font-mono { font-family: var(--font-body) !important; }
+.notebook-app input::placeholder,
+.notebook-app textarea::placeholder { color: rgba(26, 26, 26, .55); opacity: 1; }
+.notebook-app #modal > div { color: var(--text-primary); }
 .notebook-app .bg-white,
 .notebook-app .bg-slate-50,
 .notebook-app .bg-gray-50 { background-color: var(--bg-page) !important; }
+.notebook-app .bg-slate-900,
+.notebook-app .bg-slate-800,
+.notebook-app .bg-slate-700 {
+  color: #fff !important;
+}
+.notebook-app nav.bg-slate-900 {
+  background-color: var(--bg-outer) !important;
+  color: #fff !important;
+}
+.notebook-app nav.bg-slate-900 .text-slate-300,
+.notebook-app nav.bg-slate-900 .text-slate-400,
+.notebook-app nav.bg-slate-900 .text-slate-500,
+.notebook-app nav.bg-slate-900 .text-slate-600,
+.notebook-app nav.bg-slate-900 .text-slate-700,
+.notebook-app nav.bg-slate-900 .text-slate-800,
+.notebook-app nav.bg-slate-900 .text-slate-900 {
+  color: #fff !important;
+}
+.notebook-app .bg-slate-900 .text-slate-300,
+.notebook-app .bg-slate-900 .text-slate-400,
+.notebook-app .bg-slate-900 .text-slate-500,
+.notebook-app .bg-slate-900 .text-slate-700,
+.notebook-app .bg-slate-900 .text-slate-800,
+.notebook-app .bg-slate-900 .text-slate-900,
+.notebook-app .bg-slate-800 .text-slate-300,
+.notebook-app .bg-slate-800 .text-slate-400,
+.notebook-app .bg-slate-800 .text-slate-500,
+.notebook-app .bg-slate-800 .text-slate-700,
+.notebook-app .bg-slate-800 .text-slate-800,
+.notebook-app .bg-slate-800 .text-slate-900,
+.notebook-app .bg-slate-700 .text-slate-300,
+.notebook-app .bg-slate-700 .text-slate-400,
+.notebook-app .bg-slate-700 .text-slate-500,
+.notebook-app .bg-slate-700 .text-slate-700,
+.notebook-app .bg-slate-700 .text-slate-800,
+.notebook-app .bg-slate-700 .text-slate-900 {
+  color: #fff !important;
+}
 .notebook-app .text-slate-900,
 .notebook-app .text-slate-800 { color: var(--text-primary) !important; }
 .notebook-app .text-slate-700,

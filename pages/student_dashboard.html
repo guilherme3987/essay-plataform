@@ -105,7 +105,7 @@
                 <div class="overflow-y-auto p-6 sm:p-10">
                     <p id="modal-theme-date" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-3">DATA AQUI</p>
                     <h2 id="modal-theme-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-8">Título</h2>
-                    <img id="modal-theme-img" src="" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
+                    <img id="modal-theme-img" src="" alt="Imagem de apoio do tema" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
                     <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base break-words mb-8"></div>
                     
                     <div id="modal-theme-pdf-container" class="hidden border-t border-slate-200 pt-6"></div>
@@ -238,7 +238,9 @@
 
                 return `
                 <div onclick="openThemeModal(${i})" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full">
-                    ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="${esc(assetUrl(t.image_path))}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
+                    ${hasImg
+                        ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="${esc(assetUrl(t.image_path))}" alt="Ilustração do tema: ${esc(t.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>`
+                        : `<div class="h-40 bg-slate-50 flex items-center justify-center border-b border-slate-100"><svg class="w-10 h-10 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5v13"/><path d="M3 19V6a2 2 0 0 1 2-2h3.5A2.5 2.5 0 0 1 11 6.5V19a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M21 19V6a2 2 0 0 0-2-2h-3.5A2.5 2.5 0 0 0 13 6.5V19a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/></svg></div>`}
                     <div class="p-6 flex flex-col flex-1">
                         <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">${date}</p>
                         <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${esc(t.title)}</h3>

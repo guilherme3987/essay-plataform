@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="ttl">
+  <title id="ttl">Ilustração do tema: manipulação do comportamento pelo controle de dados na internet</title>
+  <defs>
+    <pattern id="lines" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M0 31.5H32" stroke="#2d2d2d" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="400" fill="#f8f6f1"/>
+  <rect width="640" height="400" fill="url(#lines)"/>
+  <rect x=".5" y=".5" width="639" height="399" fill="none" stroke="#1a1a1a" stroke-opacity=".16"/>
+
+  <g fill="#2d2d2d" opacity=".85">
+    <circle cx="22" cy="88" r="7"/>
+    <circle cx="22" cy="200" r="7"/>
+    <circle cx="22" cy="312" r="7"/>
+  </g>
+
+  <circle cx="320" cy="196" r="112" fill="#a8d8ea" opacity=".62"/>
+
+  <circle cx="320" cy="196" r="158" fill="none" stroke="#2d2d2d" stroke-width="2" stroke-opacity=".28"/>
+  <circle cx="320" cy="196" r="132" fill="none" stroke="#2d2d2d" stroke-width="2" stroke-opacity=".16"/>
+
+  <rect x="256" y="86" width="128" height="212" rx="18" fill="#2d2d2d"/>
+  <rect x="266" y="100" width="108" height="182" rx="8" fill="#f8f6f1"/>
+  <rect x="302" y="93" width="36" height="5" rx="2.5" fill="#98d4bb"/>
+
+  <circle cx="320" cy="162" r="30" fill="none" stroke="#f4b8c5" stroke-width="6"/>
+  <circle cx="320" cy="162" r="17" fill="none" stroke="#c7b8ea" stroke-width="6"/>
+  <circle cx="320" cy="162" r="5" fill="#2d2d2d"/>
+  <path d="M290 220h60M290 238h42" stroke="#2d2d2d" stroke-width="7" stroke-linecap="round" opacity=".65"/>
+
+  <circle cx="176" cy="116" r="9" fill="#f4b8c5" stroke="#2d2d2d" stroke-width="3"/>
+  <circle cx="470" cy="256" r="9" fill="#98d4bb" stroke="#2d2d2d" stroke-width="3"/>
+  <path d="M185 121 252 158M389 231 461 251" stroke="#2d2d2d" stroke-width="3" stroke-dasharray="6 8" stroke-linecap="round" opacity=".55"/>
+
+  <path d="M600 96h32a8 8 0 0 1 8 8v124a8 8 0 0 1-8 8h-32Z" fill="#a8d8ea"/>
+  <text transform="translate(628 233) rotate(-90)" text-anchor="middle" font-family="'Comic Sans MS', cursive" font-size="13" letter-spacing="3" fill="#1a1a1a">TEMA 03</text>
+</svg>

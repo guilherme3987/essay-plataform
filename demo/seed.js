@@ -36,16 +36,16 @@
       { class_id: 1, student_id: 5 }, { class_id: 2, student_id: 6 }
     ],
     themes: [
-      { id: 1, created_by: 2, status: 'published', image_path: null, pdf_path: null, created_at: '2026-11-02T10:00:00',
+      { id: 1, created_by: 2, status: 'published', image_path: 'assets/demo/themes/tema-cuidado.svg', pdf_path: null, created_at: '2026-11-02T10:00:00',
         title: 'Invisibilidade do trabalho de cuidado realizado pela mulher no Brasil',
         content: 'Cuidar de crianças, idosos e da casa é um trabalho essencial, mas raramente remunerado ou reconhecido. No Brasil, essa tarefa recai majoritariamente sobre as mulheres e limita o acesso delas ao mercado de trabalho, à educação e ao lazer.\n\nDiscuta as causas dessa invisibilidade e proponha medidas que o poder público e a sociedade podem adotar.' },
-      { id: 2, created_by: 2, status: 'published', image_path: null, pdf_path: null, created_at: '2026-10-20T10:00:00',
+      { id: 2, created_by: 2, status: 'published', image_path: 'assets/demo/themes/tema-registro-civil.svg', pdf_path: null, created_at: '2026-10-20T10:00:00',
         title: 'Desafios para o enfrentamento da invisibilidade do registro civil no Brasil',
         content: 'Sem certidão de nascimento, uma pessoa tem dificuldade para estudar, receber benefícios e exercer direitos básicos. Ainda hoje, milhares de brasileiros vivem sem documentação, sobretudo em regiões afastadas dos centros urbanos.\n\nAnalise o problema e apresente uma proposta de intervenção.' },
-      { id: 3, created_by: 2, status: 'published', image_path: null, pdf_path: null, created_at: '2026-10-05T10:00:00',
+      { id: 3, created_by: 2, status: 'published', image_path: 'assets/demo/themes/tema-dados-internet.svg', pdf_path: null, created_at: '2026-10-05T10:00:00',
         title: 'Manipulação do comportamento do usuário pelo controle de dados na internet',
         content: 'Plataformas digitais coletam informações sobre hábitos e preferências para direcionar conteúdos e anúncios. Isso levanta dúvidas sobre liberdade de escolha e privacidade.\n\nDiscuta como o controle de dados pode influenciar o comportamento e o que fazer a respeito.' },
-      { id: 4, created_by: 2, status: 'draft', image_path: null, pdf_path: null, created_at: '2026-11-18T10:00:00',
+      { id: 4, created_by: 2, status: 'draft', image_path: 'assets/demo/themes/tema-cinema.svg', pdf_path: null, created_at: '2026-11-18T10:00:00',
         title: 'Democratização do acesso ao cinema no Brasil',
         content: 'Rascunho: texto de apoio ainda em preparação. Este tema ainda não foi publicado para os alunos.' }
     ],
