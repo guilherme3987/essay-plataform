@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Converte as páginas PHP do RedaçãoPro em HTML estático para a demo.
+Converte os painéis PHP do RedaçãoPro em HTML para a branch demo.
 
-Uso (na pasta redacaopro-demo):
+Uso (na pasta do projeto):
     python tools/converter.py CAMINHO/DO/PROJETO
 
-Lê CAMINHO/DO/PROJETO/pages/*.php, grava em ./pages/*.html e copia assets/css e assets/fonts.
-Pode ser executado de novo sempre que as páginas do projeto mudarem.
+Esta demo não tem login nem banco. Apenas os três painéis são convertidos;
+as telas de autenticação foram removidas e o index.html (seletor de perfil)
+é preservado. Reexecutar o script atualiza os painéis a partir do projeto principal.
 """
 import re
 import shutil
@@ -14,45 +15,77 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ['login', 'register', 'forgot_password', 'change_password',
-         'student_dashboard', 'teacher_dashboard', 'admin', 'reset_password']
+PAGES = ['student_dashboard', 'teacher_dashboard', 'admin']
 ROLES = {'student_dashboard': 'student', 'teacher_dashboard': 'teacher', 'admin': 'admin'}
 
-STUB = """<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{titulo} - RedaçãoPro (demo)</title>
-<style>body{{font-family:system-ui,sans-serif;background:#f8fafc;color:#1e293b;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}}
-.c{{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:32px;max-width:420px;text-align:center}}
-a{{color:#4f46e5;font-weight:700}}</style></head>
-<body><div class="c"><h1 style="font-size:20px">{titulo}</h1>
-<p>Este recurso não está disponível na versão de demonstração.</p>
-<a href="{voltar}">Voltar ao login</a></div></body></html>
+DEFAULT_INDEX = """<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><title>RedaçãoPro · Demonstração</title>
+<link rel="stylesheet" href="assets/css/tailwind.css">
+<link rel="stylesheet" href="assets/css/notebook.css">
+<script src="demo/seed.js"></script><script src="demo/mock-api.js"></script></head>
+<body class="nb-root"><main class="nb-wrap nb-section">
+<h1 class="nb-display">RedaçãoPro · Demonstração</h1>
+<p class="nb-muted mt-4">Escolha um perfil:</p>
+<p class="mt-6 flex flex-wrap gap-3">
+<a class="nb-btn nb-btn--accent" href="pages/student_dashboard.html">Aluno</a>
+<a class="nb-btn nb-btn--accent" href="pages/teacher_dashboard.html">Professor</a>
+<a class="nb-btn nb-btn--accent" href="pages/admin.html">Administrador</a>
+</p></main></body></html>
 """
+
+
+def add_notebook_theme(s: str) -> str:
+    """Anexa a camada visual Notebook Tabs aos painéis convertidos."""
+    s = s.replace(
+        '<link rel="stylesheet" href="../assets/css/tailwind.css">',
+        '<link rel="stylesheet" href="../assets/css/tailwind.css">\n'
+        '    <link rel="stylesheet" href="../assets/css/notebook.css">',
+        1,
+    )
+    m = re.search(r'<body\b([^>]*)>', s)
+    if not m:
+        return s
+    attrs = m.group(1)
+    cm = re.search(r'class="([^"]*)"', attrs)
+    if cm:
+        classes = (cm.group(1).strip() + ' notebook-app').strip()
+        attrs = attrs[:cm.start(1)] + classes + attrs[cm.end(1):]
+    else:
+        attrs += ' class="notebook-app"'
+    return s[:m.start(1)] + attrs + s[m.end(1):]
 
 
 def convert(src: str, name: str) -> str:
     s = src.replace('\r\n', '\n')
-    # 1) bloco PHP do topo (proteção de rota) -> guarda em JS (mock-api.js)
+
+    # Remove a proteção de rota do PHP; a demo troca autenticação por seleção de perfil.
     s = re.sub(r'\A\s*<\?php.*?\?>\s*', '', s, count=1, flags=re.S)
-    # 2) nome do usuário e token CSRF
+
+    # Nome do usuário e token CSRF do projeto principal.
     s = s.replace('<?= htmlspecialchars($firstName) ?>', '<span data-first-name></span>')
     s = s.replace('<?= json_encode(csrf_token()) ?>', "''")
-    # 3) links entre páginas
-    s = re.sub(r'\b(' + '|'.join(PAGES) + r')\.php\b', r'\1.html', s)
-    # 4) caminhos de imagem/PDF: '../api/' + x  ->  assetUrl(x)
+
+    # Remove o wrapper de CSRF: não há servidor nem sessão na demonstração.
+    s = re.sub(r'\s*// Segurança: token CSRF injetado pelo servidor\s*const CSRF_TOKEN = [^\n]*;\s*', '\n', s)
+    s = re.sub(r'\s*const originalFetch = window\.fetch;.*?return originalFetch\(url, opts\);\s*\};\s*', '\n', s, flags=re.S)
+
+    # Links internos e saída -> troca de perfil.
+    s = re.sub(r'\b[A-Za-z_]+\.php\b', lambda m: m.group(0).replace('.php', '.html'), s)
+    s = s.replace('../api/logout.html', '../index.html').replace('../api/logout.php', '../index.html')
+    s = re.sub(r'(<a href="\.\./index\.html"[^>]*>)[^<]*(</a>)', r'\1TROCAR PERFIL\2', s)
+
+    # Caminhos de imagem/PDF: '../api/' + x  ->  assetUrl(x)
     s = re.sub(r'"\.\./api/\$\{esc\(([^)]+)\)\}"', r'"${esc(assetUrl(\1))}"', s)
     s = re.sub(r'`\.\./api/\$\{([^}]+)\}`', r'assetUrl(\1)', s)
     s = re.sub(r"'\.\./api/'\s*\+\s*([\w.]+)", r'assetUrl(\1)', s)
-    # 5) login.php: remove </form> sobrando e o código do modal de professor (elementos que não existem)
-    if name == 'login':
-        s = re.sub(r'</div>\s*</form>\s*<script>', '</div>\n    <script>', s)
-        s = re.sub(r'\n\s*const teacherModal = .*?(?=</script>)', '\n', s, flags=re.S)
-    # 6) injeta os scripts da demo no <head>
-    role = ROLES.get(name, 'none')
+
+    # Injeta os dados e a camada de API simulada no <head>.
+    role = ROLES.get(name, 'student')
     inject = ("<script>window.DEMO_ROLE='%s';</script>\n"
               '    <script src="../demo/seed.js"></script>\n'
               '    <script src="../demo/mock-api.js"></script>\n') % role
     s = s.replace('</head>', '    ' + inject + '</head>', 1)
+    s = add_notebook_theme(s)
     return s
 
 
@@ -63,25 +96,25 @@ def main():
     src_pages = proj / 'pages'
     if not src_pages.is_dir():
         sys.exit(f'Pasta {src_pages} não encontrada.')
-    (ROOT / 'pages' / 'auth').mkdir(parents=True, exist_ok=True)
 
     for name in PAGES:
         php = src_pages / f'{name}.php'
         out = ROOT / 'pages' / f'{name}.html'
-        if name == 'reset_password':
-            out = ROOT / 'pages' / 'auth' / 'reset_password.html'
-        if php.exists() and name != 'reset_password':
-            html = convert(php.read_text(encoding='utf-8'), name)
-            out.write_text(html, encoding='utf-8')
-            print(f'[ok]   {name}.php -> {out.relative_to(ROOT)}')
-            if '<?' in html:
-                print(f'[ATENÇÃO] {name}: ainda há código PHP no arquivo, revise manualmente.')
-        else:
-            titulo = {'register': 'Criar conta', 'forgot_password': 'Recuperar senha',
-                      'change_password': 'Trocar senha', 'reset_password': 'Redefinir senha'}[name]
-            voltar = '../login.html' if name == 'reset_password' else 'login.html'
-            out.write_text(STUB.format(titulo=titulo, voltar=voltar), encoding='utf-8')
-            print(f'[stub] {out.relative_to(ROOT)} (página indisponível na demo)')
+        if not php.exists():
+            print(f'[aviso] {php} não encontrado; mantendo {out.name} como está.')
+            continue
+        html = convert(php.read_text(encoding='utf-8'), name)
+        out.write_text(html, encoding='utf-8')
+        print(f'[ok]   {name}.php -> {out.relative_to(ROOT)}')
+        if '<?' in html:
+            print(f'[ATENÇÃO] {name}: ainda há código PHP no arquivo, revise manualmente.')
+
+    index_path = ROOT / 'index.html'
+    if index_path.exists():
+        print('[ok]   index.html mantido (seletor de perfil).')
+    else:
+        index_path.write_text(DEFAULT_INDEX, encoding='utf-8')
+        print('[ok]   index.html criado com seleção direta de perfil.')
 
     for sub in ('css', 'fonts'):
         origem = proj / 'assets' / sub
@@ -91,9 +124,18 @@ def main():
         else:
             print(f'[ATENÇÃO] {origem} não encontrado: copie manualmente.')
 
-    (ROOT / 'index.html').write_text(
-        '<!DOCTYPE html><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=pages/login.html">'
-        '<a href="pages/login.html">Entrar</a>', encoding='utf-8')
+    # Ajustes de fonte para o caminho da branch demo (assets/css -> assets/fonts).
+    css_path = ROOT / 'assets' / 'css' / 'tailwind.css'
+    if css_path.exists():
+        css = css_path.read_text(encoding='utf-8')
+        css = css.replace('../assets/fonts/', '../fonts/')
+        css = css.replace('outfit-v15-latin-600.woff2', 'outfit-v15-latin-700.woff2')
+        for weight, arquivo in ((700, 'outfit-v15-latin-700.woff2'), (800, 'outfit-v15-latin-800.woff2')):
+            if f'font-weight: {weight};' not in css:
+                css += (f"\n@font-face {{ font-family: 'Outfit'; font-style: normal; "
+                        f"font-weight: {weight}; src: url('../fonts/{arquivo}') format('woff2'); }}\n")
+        css_path.write_text(css, encoding='utf-8')
+        print('[ok]   fontes locais ajustadas para assets/fonts')
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-// Dados iniciais da demo RedaçãoPro. Edite à vontade: use "Resetar demo" para recarregar.
+// Dados iniciais da demonstração RedaçãoPro. Sem banco e sem login.
+// Use o botão "Resetar demo" para voltar a este estado.
 (function () {
   // Gera uma marcação retangular (em %) sobre as linhas l1..l2 da folha de redação (imagem 720x807).
   const W = 720, H = 807, Y0 = 20, P = 25.07;
@@ -8,17 +9,23 @@
       .map(([x, y]) => ({ x: +(x / W * 100).toFixed(2), y: +(y / H * 100).toFixed(2) }));
     return { x_pos: pts[0].x, y_pos: pts[0].y, excerpt: JSON.stringify(pts) };
   }
-  const PW = 'Password@123';
   const c = (id, competency, area, comment) => Object.assign({ id, correction_id: 1, competency, comment }, area);
+
+  // Perfis exibidos na tela inicial. A pages correspondente também define DEMO_ROLE.
+  window.DEMO_PROFILES = {
+    student: { id: 3, label: 'Aluno', page: 'student_dashboard.html' },
+    teacher: { id: 2, label: 'Professor', page: 'teacher_dashboard.html' },
+    admin: { id: 1, label: 'Administrador', page: 'admin.html' }
+  };
 
   window.DEMO_SEED = {
     users: [
-      { id: 1, name: 'Administrador', email: 'admin@redacaopro.local', password: PW, role: 'admin', created_at: '2026-08-01T08:00:00' },
-      { id: 2, name: 'Professor Teste', email: 'professor@redacaopro.local', password: PW, role: 'teacher', created_at: '2026-08-01T08:05:00' },
-      { id: 3, name: 'Aluno Teste', email: 'aluno@redacaopro.local', password: PW, role: 'student', created_at: '2026-08-01T08:10:00' },
-      { id: 4, name: 'Ana Souza', email: 'ana@redacaopro.local', password: PW, role: 'student', created_at: '2026-08-02T09:00:00' },
-      { id: 5, name: 'Bruno Lima', email: 'bruno@redacaopro.local', password: PW, role: 'student', created_at: '2026-08-02T09:10:00' },
-      { id: 6, name: 'Carla Mendes', email: 'carla@redacaopro.local', password: PW, role: 'student', created_at: '2026-08-03T10:00:00' }
+      { id: 1, name: 'Administrador', email: 'admin@redacaopro.local', role: 'admin', created_at: '2026-08-01T08:00:00' },
+      { id: 2, name: 'Professor Teste', email: 'professor@redacaopro.local', role: 'teacher', created_at: '2026-08-01T08:05:00' },
+      { id: 3, name: 'Aluno Teste', email: 'aluno@redacaopro.local', role: 'student', created_at: '2026-08-01T08:10:00' },
+      { id: 4, name: 'Ana Souza', email: 'ana@redacaopro.local', role: 'student', created_at: '2026-08-02T09:00:00' },
+      { id: 5, name: 'Bruno Lima', email: 'bruno@redacaopro.local', role: 'student', created_at: '2026-08-02T09:10:00' },
+      { id: 6, name: 'Carla Mendes', email: 'carla@redacaopro.local', role: 'student', created_at: '2026-08-03T10:00:00' }
     ],
     classes: [
       { id: 1, teacher_id: 2, name: '3º Ano A', created_at: '2026-08-03T09:00:00' },
@@ -47,7 +54,8 @@
     ],
     essays: [
       { id: 1, user_id: 3, file_path: 'assets/demo/redacao-2.webp', status: 'corrected', created_at: '2026-11-10T14:30:00' },
-      { id: 2, user_id: 3, file_path: 'assets/demo/redacao-pendente.jpg', status: 'pending', created_at: '2026-11-20T10:15:00' }
+      { id: 2, user_id: 3, file_path: 'assets/demo/redacao-pendente.jpg', status: 'pending', created_at: '2026-11-20T10:15:00' },
+      { id: 3, user_id: 4, file_path: 'assets/demo/redacao-pendente.jpg', status: 'pending', created_at: '2026-11-22T09:40:00' }
     ],
     corrections: [
       { id: 1, essay_id: 1, teacher_id: 2, score: 920, comp1_score: 160, comp2_score: 200, comp3_score: 160, comp4_score: 200, comp5_score: 200,

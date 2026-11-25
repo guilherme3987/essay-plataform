@@ -1,1 +1,342 @@
-<!DOCTYPE html><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=pages/login.html"><a href="pages/login.html">Entrar</a>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedaçãoPro · Caderno de correções</title>
+    <meta name="description" content="Demonstração interativa da RedaçãoPro: temas por turma, envio de redações em imagem, correção por competências e espelho do aluno. Sem login, sem servidor e sem banco de dados.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="RedaçãoPro · Caderno de correções">
+    <meta property="og:description" content="Do tema ao espelho da correção em um caderno só. Explore a demonstração sem login e sem banco de dados.">
+    <meta property="og:url" content="https://guilherme3987.github.io/essay-plataform/">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="assets/css/tailwind.css">
+    <link rel="stylesheet" href="assets/css/notebook.css">
+    <script src="demo/seed.js"></script>
+    <script src="demo/mock-api.js"></script>
+    <style>
+        .nb-hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
+        .nb-hero-art { position: relative; isolation: isolate; }
+        .nb-hero-art::before { content: ''; position: absolute; inset: 18px -18px -18px 18px; border: 1px solid rgba(248,246,241,.18); border-radius: 8px; z-index: -1; }
+        .nb-legal { padding-block: 2rem; }
+        @media (max-width: 767px) {
+            .nb-hero-grid { grid-template-columns: 1fr; }
+            .nb-hero-art::before { inset: 12px -10px -10px 12px; }
+        }
+    </style>
+</head>
+<body class="nb-root">
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+        <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5v13"/><path d="M3 19V6a2 2 0 0 1 2-2h3.5A2.5 2.5 0 0 1 11 6.5V19a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M21 19V6a2 2 0 0 0-2-2h-3.5A2.5 2.5 0 0 0 13 6.5V19a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/></symbol>
+        <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/><path d="M13.5 7.5 16.5 10.5"/></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></symbol>
+        <symbol id="i-quote" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 6C6.5 7.5 5 10 5 13.5V18h6v-6H8.4c.3-1.6 1.1-2.8 2.6-3.6L9.5 6Zm9 0c-3 1.5-4.5 4-4.5 7.5V18h6v-6h-2.6c.3-1.6 1.1-2.8 2.6-3.6L18.5 6Z"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-1.5a4 4 0 0 0-3-3.87"/><path d="M16 4.13a3.5 3.5 0 0 1 0 6.74"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 16v-5M11 16V7M16 16v-8M21 16V4"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+        <symbol id="i-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3.2l-7 8 8.3 10h-6.5l-5-6.2L4.6 21H1.4l7.5-8.6L1 3h6.7l4.6 5.7L17.5 3Zm-1.1 16h1.8L7.8 4.9H5.9L16.4 19Z"/></symbol>
+        <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M5.5 8H3v13h2.5V8Zm-1.2-5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM21 13.8c0-4.1-2.2-6-5.1-6-2.3 0-3.4 1.3-4 2.2V8H9.5v13H12v-7.1c0-1.9 1-2.8 2.5-2.8s2.3.9 2.3 2.8V21H21v-7.2Z"/></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></symbol>
+    </svg>
+
+    <header class="nb-nav">
+        <div class="nb-wrap nb-nav__inner">
+            <a class="nb-brand" href="#inicio" aria-label="RedaçãoPro, voltar ao início">
+                <span class="nb-brand__mark">R</span>
+                <span>
+                    <span class="nb-brand__name">RedaçãoPro</span>
+                    <span class="nb-brand__sub">Caderno de correções</span>
+                </span>
+            </a>
+            <nav class="nb-nav__links" aria-label="Navegação principal">
+                <a href="#inicio">Início</a>
+                <a href="#como-funciona">Como funciona</a>
+                <a href="#roteiro">Roteiro</a>
+                <a href="#perfis">Perfis</a>
+                <a href="#contato">Contato</a>
+            </nav>
+            <button type="button" class="nb-btn nb-btn--dark" onclick="document.getElementById('perfis').scrollIntoView({behavior:'smooth'})">
+                Escolher perfil
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="nb-section" id="inicio">
+            <div class="nb-wrap nb-hero-grid">
+                <div>
+                    <p class="nb-eyebrow nb-reveal">Ambiente de demonstração · sem login</p>
+                    <h1 class="nb-display nb-reveal nb-reveal--1">Do tema ao espelho da correção, em um caderno só.</h1>
+                    <p class="nb-lead nb-reveal nb-reveal--2">
+                        A RedaçãoPro reúne temas por turma, envio em imagem, marcação de trechos e notas por competência.
+                        Aqui você percorre o fluxo inteiro sem senha, sem servidor e sem banco de dados — tudo fica neste navegador.
+                    </p>
+                    <div class="nb-reveal nb-reveal--3" style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem">
+                        <button type="button" class="nb-btn nb-btn--accent" onclick="demoSelectProfile('student')">
+                            Explorar como aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+                        </button>
+                        <a class="nb-btn nb-btn--ghost" href="#roteiro">Ver roteiro</a>
+                    </div>
+                    <p class="nb-muted nb-reveal nb-reveal--4" style="font-size:.75rem;margin-top:1.25rem">
+                        Dados locais · use “Resetar demo” para recomeçar.
+                    </p>
+                </div>
+
+                <div class="nb-hero-art nb-reveal nb-reveal--2">
+                    <div class="nb-paper">
+                        <div class="nb-holes" aria-hidden="true">
+                            <span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span>
+                        </div>
+                        <div class="nb-paper__body">
+                            <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.25rem">
+                                <span style="font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-ink)">Entrada 01 · 25 nov 2026</span>
+                                <span class="nb-stamp">880</span>
+                            </div>
+                            <h2 class="nb-h3">Competência 2 — argumentação</h2>
+                            <p class="nb-muted" style="font-size:.875rem;margin:.5rem 0 1.25rem">
+                                Trecho selecionado na imagem e associado à competência.
+                            </p>
+                            <img class="nb-hero-photo" src="assets/demo/redacao-2.webp" alt="Página de redação manuscrita usada na demonstração">
+                            <div class="nb-ruled" style="margin-top:1.25rem;padding:1rem 0">
+                                <p style="margin:0;font-family:var(--font-display);font-size:1rem">“A escola é um espaço de construção de sentidos.”</p>
+                                <p style="margin:.35rem 0 0;font-size:.8125rem;color:#3f8f72">Comentário publicado · +40 pontos</p>
+                            </div>
+                        </div>
+                        <div class="nb-tabs" aria-hidden="true">
+                            <span class="nb-tab nb-tab--mint">Aluno</span>
+                            <span class="nb-tab nb-tab--lavender">Professor</span>
+                            <span class="nb-tab nb-tab--pink">Correção</span>
+                            <span class="nb-tab nb-tab--sky">Roteiro</span>
+                            <span class="nb-tab nb-tab--cream">Demo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="nb-section" id="como-funciona" style="background:rgba(26,26,26,.35)">
+            <div class="nb-wrap">
+                <p class="nb-eyebrow">O caderno</p>
+                <h2 class="nb-h2">Três olhares sobre o mesmo texto.</h2>
+                <div class="nb-features" style="margin-top:2.5rem">
+
+                    <article class="nb-card nb-reveal">
+                        <div class="nb-card__icon nb-card__icon--mint"><svg aria-hidden="true"><use href="#i-book"/></svg></div>
+                        <p class="nb-eyebrow" style="color:#3f8f72">Professor</p>
+                        <h3 class="nb-h3">Temas e turmas</h3>
+                        <p class="nb-muted">Publique um tema, vincule à turma e disponibilize o texto de apoio. O aluno encontra tudo organizado em um só lugar.</p>
+                        <ul class="nb-card__list">
+                            <li>Banco de temas por turma</li>
+                            <li>Material de apoio em anexo</li>
+                            <li>Publicação imediata no painel do aluno</li>
+                        </ul>
+                    </article>
+
+                    <article class="nb-card nb-reveal nb-reveal--1">
+                        <div class="nb-card__icon nb-card__icon--lavender"><svg aria-hidden="true"><use href="#i-pen"/></svg></div>
+                        <p class="nb-eyebrow" style="color:#6f56a0">Correção</p>
+                        <h3 class="nb-h3">Marcação sobre a imagem</h3>
+                        <p class="nb-muted">Arraste sobre a redação para destacar trechos, associe competências e registre notas com parecer.</p>
+                        <ul class="nb-card__list">
+                            <li>Fila de redações pendentes</li>
+                            <li>Notas por competência</li>
+                            <li>Comentários no trecho marcado</li>
+                        </ul>
+                    </article>
+
+                    <article class="nb-card nb-reveal nb-reveal--2">
+                        <div class="nb-card__icon nb-card__icon--pink"><svg aria-hidden="true"><use href="#i-file"/></svg></div>
+                        <p class="nb-eyebrow" style="color:#a85468">Aluno</p>
+                        <h3 class="nb-h3">Espelho da correção</h3>
+                        <p class="nb-muted">A devolutiva volta para o aluno com a imagem marcada, a nota final e os apontamentos de cada competência.</p>
+                        <ul class="nb-card__list">
+                            <li>Histórico de envios</li>
+                            <li>Nota e parecer legíveis</li>
+                            <li>Feedback visual sobre a própria redação</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="nb-section nb-wrap" id="roteiro">
+            <div class="nb-paper">
+                <div class="nb-holes" aria-hidden="true">
+                    <span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span><span class="nb-hole"></span>
+                </div>
+                <div class="nb-paper__body">
+                    <p class="nb-eyebrow">Roteiro de validação</p>
+                    <h2 class="nb-h2">Cinco passos, do tema ao espelho.</h2>
+                    <div class="nb-steps" style="margin-top:2rem">
+                        <div class="nb-step"><span class="nb-step__num">1</span><div><strong>Professor publica o tema</strong><p>Escolha a turma, escreva a proposta e anexe o texto de apoio.</p></div></div>
+                        <div class="nb-step"><span class="nb-step__num">2</span><div><strong>Aluno envia a redação</strong><p>Abra “Temas de Redação”, consulte o apoio e envie a imagem em “Meus Envios”.</p></div></div>
+                        <div class="nb-step"><span class="nb-step__num">3</span><div><strong>Professor marca e avalia</strong><p>Selecione os trechos na imagem, vincule competências e atribua as notas.</p></div></div>
+                        <div class="nb-step"><span class="nb-step__num">4</span><div><strong>Aluno abre o espelho</strong><p>Veja a nota final, o parecer e os comentários sobre a própria redação.</p></div></div>
+                        <div class="nb-step"><span class="nb-step__num">5</span><div><strong>Admin acompanha o fluxo</strong><p>Confira indicadores e gerencie os perfis usados na demonstração.</p></div></div>
+                    </div>
+                </div>
+                <div class="nb-tabs" aria-hidden="true">
+                    <span class="nb-tab nb-tab--mint">Publicar</span>
+                    <span class="nb-tab nb-tab--lavender">Enviar</span>
+                    <span class="nb-tab nb-tab--pink">Corrigir</span>
+                    <span class="nb-tab nb-tab--sky">Devolver</span>
+                    <span class="nb-tab nb-tab--cream">Validar</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="nb-section" id="vozes" style="background:rgba(26,26,26,.35)">
+            <div class="nb-wrap">
+                <p class="nb-eyebrow">Vozes do caderno</p>
+                <h2 class="nb-h2">Quem percorre o fluxo.</h2>
+                <div class="nb-quotes" style="margin-top:2.5rem">
+                    <article class="nb-card nb-quote nb-reveal">
+                        <svg class="nb-muted" style="width:26px;height:26px;color:var(--tab-lavender)" aria-hidden="true"><use href="#i-quote"/></svg>
+                        <blockquote>“Consigo ver onde perdi pontos sem precisar decifrar um PDF. O trecho marcado na imagem deixa isso claro.”</blockquote>
+                        <div class="nb-quote__who"><span class="nb-avatar nb-avatar--mint">MA</span><div><strong>Marina A.</strong><span>Aluna · 3º ano</span></div></div>
+                    </article>
+                    <article class="nb-card nb-quote nb-reveal nb-reveal--1">
+                        <svg class="nb-muted" style="width:26px;height:26px;color:var(--tab-lavender)" aria-hidden="true"><use href="#i-quote"/></svg>
+                        <blockquote>“Marco o trecho e a nota por competência fica junto. A devolutiva sai pronta no mesmo encontro.”</blockquote>
+                        <div class="nb-quote__who"><span class="nb-avatar nb-avatar--lavender">RC</span><div><strong>Prof. Ricardo C.</strong><span>Linguagens · professor</span></div></div>
+                    </article>
+                    <article class="nb-card nb-quote nb-reveal nb-reveal--2">
+                        <svg class="nb-muted" style="width:26px;height:26px;color:var(--tab-lavender)" aria-hidden="true"><use href="#i-quote"/></svg>
+                        <blockquote>“Sem login e sem servidor, dá para mostrar o ciclo completo da correção em poucos minutos.”</blockquote>
+                        <div class="nb-quote__who"><span class="nb-avatar nb-avatar--pink">CV</span><div><strong>Coordenação</strong><span>Validação do produto</span></div></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="nb-section nb-wrap" id="perfis">
+            <p class="nb-eyebrow">Planos de demonstração</p>
+            <h2 class="nb-h2">Escolha seu caderno.</h2>
+            <p class="nb-muted" style="max-width:62ch;margin-top:1rem">
+                Os três perfis usam os mesmos dados locais. Entrar como professor, aluno ou administrador apenas muda o ponto de vista sobre o fluxo.
+            </p>
+
+            <div class="nb-plans" style="margin-top:3.5rem">
+                <article class="nb-card nb-plan nb-reveal">
+                    <p class="nb-eyebrow" style="color:#3f8f72">Aluno</p>
+                    <h3 class="nb-h3">Caderno do aluno</h3>
+                    <p class="nb-plan__price">R$ 0</p>
+                    <p class="nb-plan__note">Demonstração aberta, sem cartão.</p>
+                    <ul class="nb-card__list">
+                        <li><svg style="width:14px;height:14px;color:#3f8f72" aria-hidden="true"><use href="#i-check"/></svg> Temas publicados por turma</li>
+                        <li><svg style="width:14px;height:14px;color:#3f8f72" aria-hidden="true"><use href="#i-check"/></svg> Envio da redação em imagem</li>
+                        <li><svg style="width:14px;height:14px;color:#3f8f72" aria-hidden="true"><use href="#i-check"/></svg> Espelho com notas e parecer</li>
+                    </ul>
+                    <button type="button" class="nb-btn nb-btn--ink nb-btn--block" style="margin-top:1.75rem" onclick="demoSelectProfile('student')">Entrar como aluno</button>
+                </article>
+
+                <article class="nb-card nb-plan nb-plan--featured nb-reveal nb-reveal--1">
+                    <span class="nb-plan__badge">Mais usado</span>
+                    <p class="nb-eyebrow" style="color:#6f56a0">Professor</p>
+                    <h3 class="nb-h3">Caderno do professor</h3>
+                    <p class="nb-plan__price">R$ 0</p>
+                    <p class="nb-plan__note">O caminho completo da correção.</p>
+                    <ul class="nb-card__list">
+                        <li><svg style="width:14px;height:14px;color:#6f56a0" aria-hidden="true"><use href="#i-check"/></svg> Publicação de temas e turmas</li>
+                        <li><svg style="width:14px;height:14px;color:#6f56a0" aria-hidden="true"><use href="#i-check"/></svg> Fila de correção com marcações</li>
+                        <li><svg style="width:14px;height:14px;color:#6f56a0" aria-hidden="true"><use href="#i-check"/></svg> Notas por competência e parecer</li>
+                    </ul>
+                    <button type="button" class="nb-btn nb-btn--accent nb-btn--block" style="margin-top:1.75rem" onclick="demoSelectProfile('teacher')">Entrar como professor</button>
+                </article>
+
+                <article class="nb-card nb-plan nb-reveal nb-reveal--2">
+                    <p class="nb-eyebrow" style="color:#a85468">Administrador</p>
+                    <h3 class="nb-h3">Caderno de gestão</h3>
+                    <p class="nb-plan__price">R$ 0</p>
+                    <p class="nb-plan__note">Visão geral da demonstração.</p>
+                    <ul class="nb-card__list">
+                        <li><svg style="width:14px;height:14px;color:#a85468" aria-hidden="true"><use href="#i-check"/></svg> Indicadores do fluxo</li>
+                        <li><svg style="width:14px;height:14px;color:#a85468" aria-hidden="true"><use href="#i-check"/></svg> Cadastro e remoção de perfis</li>
+                        <li><svg style="width:14px;height:14px;color:#a85468" aria-hidden="true"><use href="#i-check"/></svg> Evolução dos envios</li>
+                    </ul>
+                    <button type="button" class="nb-btn nb-btn--ink nb-btn--block" style="margin-top:1.75rem" onclick="demoSelectProfile('admin')">Entrar como administrador</button>
+                </article>
+            </div>
+        </section>
+
+        <section class="nb-section" style="background:var(--bg-page);color:var(--text-primary)">
+            <div class="nb-wrap" style="text-align:center">
+                <p class="nb-eyebrow" style="color:#6f56a0">Última página</p>
+                <h2 class="nb-display" style="font-size:clamp(2rem,4vw,3rem)">Abra o caderno e comece pela primeira página.</h2>
+                <p class="nb-muted" style="max-width:60ch;margin:1.25rem auto 0">
+                    Todo o progresso da demonstração vive no armazenamento deste navegador. O reset devolve os dados iniciais quando você quiser repetir o roteiro.
+                </p>
+                <div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:2rem">
+                    <button type="button" class="nb-btn nb-btn--dark" onclick="document.getElementById('perfis').scrollIntoView({behavior:'smooth'})">Escolher perfil</button>
+                    <button type="button" class="nb-btn nb-btn--ink" onclick="demoReset()">Resetar demo</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="nb-footer" id="contato">
+        <div class="nb-wrap">
+            <div class="nb-footer__grid">
+                <div>
+                    <div class="nb-brand" style="color:var(--bg-page)">
+                        <span class="nb-brand__mark">R</span>
+                        <span><span class="nb-brand__name">RedaçãoPro</span><span class="nb-brand__sub">Caderno de correções</span></span>
+                    </div>
+                    <p style="max-width:34ch;font-size:.875rem;margin-top:1.25rem">
+                        Uma demonstração editorial do fluxo de redações: tema, envio, correção e devolutiva.
+                    </p>
+                    <div class="nb-social" aria-label="Redes sociais">
+                        <a href="#contato" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-instagram"/></svg></a>
+                        <a href="#contato" aria-label="X"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
+                        <a href="#contato" aria-label="LinkedIn"><svg aria-hidden="true"><use href="#i-linkedin"/></svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Navegação</h4>
+                    <a href="#inicio">Início</a>
+                    <a href="#como-funciona">Como funciona</a>
+                    <a href="#roteiro">Roteiro</a>
+                    <a href="#vozes">Vozes do caderno</a>
+                    <a href="#perfis">Perfis</a>
+                </div>
+                <div>
+                    <h4>Painéis</h4>
+                    <a href="pages/student_dashboard.html">Painel do aluno</a>
+                    <a href="pages/teacher_dashboard.html">Painel do professor</a>
+                    <a href="pages/admin.html">Painel administrativo</a>
+                </div>
+                <div>
+                    <h4>Contato</h4>
+                    <a href="mailto:contato@redacaopro.local"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:.35rem" aria-hidden="true"><use href="#i-mail"/></svg> contato@redacaopro.local</a>
+                    <p class="nb-seo" style="margin-top:1rem">
+                        RedaçãoPro · correção de redações por competências · espelho de correção · plataforma educacional.
+                    </p>
+                </div>
+            </div>
+
+            <div class="nb-legal" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem;border-top:1px solid rgba(248,246,241,.1)">
+                <div id="privacidade">
+                    <h4>Privacidade</h4>
+                    <p style="font-size:.8125rem;margin:0">Esta demonstração não envia dados a servidores. Os registros ficam apenas no armazenamento local do navegador e podem ser apagados pelo botão “Resetar demo”.</p>
+                </div>
+                <div id="termos">
+                    <h4>Termos de uso</h4>
+                    <p style="font-size:.8125rem;margin:0">Os perfis, redações e notas exibidos são fictícios e servem somente para validação da experiência. Nenhum dado é coletado.</p>
+                </div>
+            </div>
+
+            <div class="nb-footer__bottom">
+                <span>© 2026 RedaçãoPro · Demonstração local.</span>
+                <span style="display:flex;gap:1.25rem;flex-wrap:wrap">
+                    <a href="#privacidade">Política de privacidade</a>
+                    <a href="#termos">Termos de uso</a>
+                    <a href="#contato">Contato</a>
+                </span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

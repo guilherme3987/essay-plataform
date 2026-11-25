@@ -1,0 +1,20 @@
+# Branch demo: apenas frontend estático (GitHub Pages)
+
+# Backend / infraestrutura da aplicação principal
+api/
+database/
+seeder/
+entrypoint.sh
+Dockerfile
+docker-compose.yml
+vendor/
+
+# Ambientes Python e cache
+venv/
+seeder/venv/
+__pycache__/
+*.py[cod]
+
+# Arquivos locais do sistema
+.DS_Store
+Thumbs.db

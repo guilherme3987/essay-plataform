@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Avaliador - RedaçãoPro</title>
     <link rel="stylesheet" href="../assets/css/tailwind.css">
+    <link rel="stylesheet" href="../assets/css/notebook.css">
     <script>window.DEMO_ROLE='teacher';</script>
     <script src="../demo/seed.js"></script>
     <script src="../demo/mock-api.js"></script>
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-800 relative">
+<body class="min-h-screen bg-slate-50 text-slate-800 relative notebook-app">
 
     <div id="toast" class="fixed bottom-4 right-4 z-50 max-w-sm px-6 py-4 rounded-xl shadow-2xl text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest border-b-4 hidden transition-opacity duration-300"></div>
 
@@ -47,7 +48,7 @@
 
             <div class="flex items-center gap-4 sm:gap-6">
                 <span class="hidden sm:block text-slate-300 text-xs font-bold uppercase tracking-wider"><span data-first-name></span></span>
-                <a href="../api/logout.php" class="text-[9px] sm:text-[10px] font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-widest px-2 py-1 hover:bg-slate-800 rounded">ENCERRAR SESSÃO</a>
+                <a href="../index.html" class="text-[9px] sm:text-[10px] font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest px-2 py-1 hover:bg-slate-800 rounded">TROCAR PERFIL</a>
             </div>
         </div>
     </nav>
@@ -157,7 +158,7 @@
 
                 <div class="md:col-span-2">
                     <div id="class-details-empty" class="bg-slate-50 border-2 border-slate-200 border-dashed rounded-3xl py-20 text-center">
-                        <span class="text-4xl">👨‍🎓</span>
+                        <svg class="w-10 h-10 mx-auto text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-1.5a4 4 0 0 0-3-3.87"/><path d="M16 4.13a3.5 3.5 0 0 1 0 6.74"/></svg>
                         <p class="font-bold text-slate-500 text-sm mt-4">Selecione uma turma para gerenciar os alunos.</p>
                     </div>
 
@@ -234,7 +235,7 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-center text-[11px] text-slate-400 font-medium">✏️ Arraste sobre a redação para marcar um trecho</p>
+                    <p class="text-center text-[11px] text-slate-400 font-medium"><svg class="w-3.5 h-3.5 inline-block -mt-0.5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/></svg> Arraste sobre a redação para marcar um trecho</p>
                 </div>
             </div>
         </div>
@@ -242,20 +243,7 @@
     </main>
 
     <script>
-        // Segurança: token CSRF injetado pelo servidor
-        const CSRF_TOKEN = '';
-
         const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-        const originalFetch = window.fetch;
-        window.fetch = function (url, opts = {}) {
-            const method = (opts.method || 'GET').toUpperCase();
-            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
-                if (!opts.headers) opts.headers = {};
-                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
-            }
-            return originalFetch(url, opts);
-        };
 
         const COMPETENCIES = {
             1: {
@@ -386,14 +374,14 @@
                     `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Rascunho</span>` :
                     `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Publicado</span>`;
                 const pdfBadge = t.pdf_path ?
-                    `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ml-2" title="Possui material em PDF anexado">📎 PDF</span>` :
+                    `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ml-2" title="Possui material em PDF anexado"><svg class="w-3 h-3 inline-block -mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5L10.5 18a2 2 0 0 1-3-3l8-8"/></svg> PDF</span>` :
                     '';
 
                 return `
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:border-indigo-300 transition-colors duration-300 group">
                     ${t.image_path
                         ? `<img src="${esc(assetUrl(t.image_path))}" class="w-full sm:w-32 h-24 object-cover rounded-xl shrink-0 bg-slate-100">`
-                        : `<div class="w-full sm:w-32 h-24 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100"><span class="text-indigo-300 text-2xl">📝</span></div>`
+                        : `<div class="w-full sm:w-32 h-24 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100"><svg class="w-8 h-8 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/><path d="M13.5 7.5 16.5 10.5"/></svg></div>`
                     }
                     <div class="flex-1 min-w-0 w-full">
                         <div class="flex items-center justify-between mb-1.5">
@@ -402,8 +390,8 @@
                                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">${date}</p>
                             </div>
                             <div class="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                                <button onclick="editTheme(${i})" class="w-7 h-7 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Editar">✏️</button>
-                                <button onclick="deleteTheme(${t.id})" class="w-7 h-7 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Excluir">🗑️</button>
+                                <button onclick="editTheme(${i})" class="w-7 h-7 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Editar"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/></svg></button>
+                                <button onclick="deleteTheme(${t.id})" class="w-7 h-7 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-lg flex items-center justify-center transition-colors shadow-sm" title="Excluir"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg></button>
                             </div>
                         </div>
                         <h4 class="font-bold text-slate-900 text-base mb-1.5 truncate pr-8">${esc(t.title)}</h4>
@@ -531,7 +519,7 @@
             document.getElementById('queue-count').textContent = essays.length;
             const listDiv = document.getElementById('queue-list');
             if (essays.length === 0) {
-                listDiv.innerHTML = `<div class="col-span-full bg-white rounded-3xl border-2 border-dashed border-slate-200 py-20 text-center"><p class="text-3xl mb-3">🎉</p><p class="font-bold text-slate-600 text-lg">Tudo em dia!</p><p class="text-slate-400 text-sm mt-1">Não há redações pendentes.</p></div>`;
+                listDiv.innerHTML = `<div class="col-span-full bg-white rounded-3xl border-2 border-dashed border-slate-200 py-20 text-center"><svg class="w-10 h-10 mx-auto text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg><p class="font-bold text-slate-600 text-lg">Tudo em dia!</p><p class="text-slate-400 text-sm mt-1">Não há redações pendentes.</p></div>`;
                 return;
             }
             listDiv.innerHTML = essays.map(essay => {
@@ -664,7 +652,7 @@
             const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
             poly.setAttribute('points', currentPath.map(p => `${p.x},${p.y}`).join(' '));
             poly.setAttribute('fill', 'none');
-            poly.setAttribute('stroke', '#facc15'); // ✅ amarelo fixo enquanto desenha (comp ainda não foi escolhida)
+            poly.setAttribute('stroke', '#facc15'); // amarelo fixo enquanto desenha (competência ainda não foi escolhida)
             poly.setAttribute('stroke-width', '24');
             poly.setAttribute('stroke-linecap', 'round');
             poly.setAttribute('stroke-linejoin', 'round');
@@ -673,7 +661,7 @@
             poly.style.mixBlendMode = 'multiply';
 
             svgOverlay.appendChild(poly);
-            currentPolyline = poly; // ✅ atribui para o mousemove conseguir atualizar os pontos
+            currentPolyline = poly; // atribui para o mousemove conseguir atualizar os pontos
         });
 
         drawingArea.addEventListener('mousemove', (e) => {
@@ -803,7 +791,7 @@
                         <span class="text-[9px] font-black ${comp.text} uppercase">${comp.short}</span>
                         <p class="text-xs text-slate-700 mt-0.5 leading-snug">${esc(c.comment)}</p>
                     </div>
-                    <button onclick="removeComment(${i})" class="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors text-xs">✕</button>
+                    <button onclick="removeComment(${i})" class="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors" aria-label="Remover comentário"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
                 </div>`;
             });
             document.getElementById('comments-list').innerHTML = htmlList;
@@ -888,7 +876,7 @@
                         <h4 class="font-bold text-slate-900">${esc(c.name)}</h4>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">${c.students.length} ALUNOS</p>
                     </div>
-                    <button onclick="event.stopPropagation(); deleteClass(${c.id})" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity">🗑️</button>
+                    <button onclick="event.stopPropagation(); deleteClass(${c.id})" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg></button>
                 </div>
             `).join('');
         }
@@ -1010,7 +998,7 @@
                 const res = await fetch('../api/api_manage_classes.php?action=get_classes');
                 const classes = await res.json();
                 document.getElementById('theme-classes-checkboxes').innerHTML = classes.length === 0 ?
-                    `<span class="text-xs text-rose-500 font-bold">⚠️ Crie uma turma primeiro na aba 'Turmas'.</span>` :
+                    `<span class="text-xs text-rose-500 font-bold"><svg class="w-3.5 h-3.5 inline-block -mt-0.5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.8 20h18.4L12 4Z"/><path d="M12 10v4M12 17h.01"/></svg> Crie uma turma primeiro na aba 'Turmas'.</span>` :
                     classes.map(c => `
                         <label class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
                             <input type="checkbox" name="theme_classes" value="${c.id}" class="accent-indigo-600 w-4 h-4 rounded">

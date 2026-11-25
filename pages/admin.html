@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Admin - RedaçãoPro</title>
     <link rel="stylesheet" href="../assets/css/tailwind.css">
+    <link rel="stylesheet" href="../assets/css/notebook.css">
     <script>window.DEMO_ROLE='admin';</script>
     <script src="../demo/seed.js"></script>
     <script src="../demo/mock-api.js"></script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="min-h-screen bg-slate-50 text-slate-800 notebook-app">
     
     <div id="toast" class="fixed bottom-4 right-4 z-50 max-w-sm px-6 py-4 rounded-xl shadow-2xl text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest border-b-4 hidden transition-opacity duration-300"></div>
 
@@ -28,7 +29,7 @@
 
             <div class="flex items-center gap-4 sm:gap-6">
                 <span class="hidden sm:block text-slate-300 text-xs font-bold uppercase tracking-wider"><span data-first-name></span></span>
-                <a href="../api/logout.php" class="text-[9px] sm:text-[10px] font-bold text-slate-500 hover:text-rose-500 transition-colors uppercase tracking-widest px-2 py-1 hover:bg-slate-800 rounded">Sair do Sistema</a>
+                <a href="../index.html" class="text-[9px] sm:text-[10px] font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest px-2 py-1 hover:bg-slate-800 rounded">TROCAR PERFIL</a>
             </div>
         </div>
     </nav>
@@ -40,22 +41,22 @@
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                    <span class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl mb-4">👨‍🎓</span>
+                    <span class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-4"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-1.5a4 4 0 0 0-3-3.87"/><path d="M16 4.13a3.5 3.5 0 0 1 0 6.74"/></svg></span>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alunos Cadastrados</p>
                     <p id="stat-students" class="text-4xl font-black text-slate-900 mt-2">...</p>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                    <span class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl mb-4">👨‍🏫</span>
+                    <span class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-4"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"/><path d="M6 10v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M21 7.5V13"/></svg></span>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Professores</p>
                     <p id="stat-teachers" class="text-4xl font-black text-slate-900 mt-2">...</p>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                    <span class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl mb-4">📝</span>
+                    <span class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 5.5 3 3"/><path d="M4 20h4l11-11a2.12 2.12 0 0 0-3-3L5 17v3Z"/><path d="M13.5 7.5 16.5 10.5"/></svg></span>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Redações Corrigidas</p>
                     <p class="text-4xl font-black text-slate-900 mt-2"><span id="stat-corrected">...</span><span class="text-lg text-slate-400">/<span id="stat-essays">...</span></span></p>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                    <span class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-xl mb-4">📚</span>
+                    <span class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mb-4"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5v13"/><path d="M3 19V6a2 2 0 0 1 2-2h3.5A2.5 2.5 0 0 1 11 6.5V19a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M21 19V6a2 2 0 0 0-2-2h-3.5A2.5 2.5 0 0 0 13 6.5V19a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/></svg></span>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Temas Publicados</p>
                     <p id="stat-themes" class="text-4xl font-black text-slate-900 mt-2">...</p>
                 </div>
@@ -66,10 +67,10 @@
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
                 <div>
                     <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Gerenciamento de Usuários</h2>
-                    <p class="text-slate-500 text-sm mt-2 font-medium">Controle os acessos, senhas e permissões da plataforma.</p>
+                    <p class="text-slate-500 text-sm mt-2 font-medium">Gerencie os perfis de demonstração da plataforma.</p>
                 </div>
                 <button onclick="switchAdminView('add-user')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-widest shadow-lg transition-colors">
-                    + NOVO USUÁRIO
+                    + NOVO PERFIL
                 </button>
             </div>
 
@@ -98,7 +99,7 @@
             </button>
             
             <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-                <h2 class="text-2xl font-extrabold text-slate-900 mb-6">Cadastrar Novo Usuário</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 mb-6">Cadastrar Novo Perfil</h2>
                 <div id="alertBox" class="hidden mb-6 rounded-xl p-4 shadow-sm"></div>
 
                 <form id="addUserForm" class="space-y-6">
@@ -111,23 +112,17 @@
                         <input type="email" id="email" required class="w-full py-4 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-colors">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2">Senha Provisória</label>
-                            <input type="password" id="password" required class="w-full py-4 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2">Nível de Acesso</label>
-                            <select id="role" required class="w-full py-4 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-colors appearance-none">
-                                <option value="student">Aluno</option>
-                                <option value="teacher">Professor</option>
-                                <option value="admin">Administrador (Sistema)</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 ml-1 mb-2">Perfil na Demonstração</label>
+                        <select id="role" required class="w-full py-4 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-colors appearance-none">
+                            <option value="student">Aluno</option>
+                            <option value="teacher">Professor</option>
+                            <option value="admin">Administrador (Sistema)</option>
+                        </select>
                     </div>
 
                     <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-4 rounded-xl transition-all duration-200 text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/30">
-                        SALVAR NOVO USUÁRIO
+                        SALVAR NOVO PERFIL
                     </button>
                 </form>
             </div>
@@ -136,20 +131,7 @@
     </main>
 
     <script>
-        // Segurança: token CSRF injetado pelo servidor
-        const CSRF_TOKEN = '';
-
         const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-        const originalFetch = window.fetch;
-        window.fetch = function (url, opts = {}) {
-            const method = (opts.method || 'GET').toUpperCase();
-            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
-                if (!opts.headers) opts.headers = {};
-                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
-            }
-            return originalFetch(url, opts);
-        };
 
         const showToast = (msg, type = 'info') => {
             const toast = document.getElementById('toast');
@@ -223,7 +205,7 @@
         window.deleteUser = async (id) => {
             const user = currentUsers.find(u => u.id === id);
             const name = user ? user.name : 'este usuário';
-            if(!confirm(`⚠️ ATENÇÃO: Deseja realmente excluir o usuário ${name}?\nIsso apagará todas as redações e temas vinculados a ele!`)) return;
+            if(!confirm(`ATENÇÃO: Deseja realmente excluir o usuário ${name}?\nIsso apagará todas as redações e temas vinculados a ele!`)) return;
             try {
                 const res = await fetch('../api/api_admin.php', {
                     method: 'POST',
@@ -248,7 +230,6 @@
                 action: 'add_user',
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
                 role: document.getElementById('role').value
             };
 
@@ -276,7 +257,7 @@
             } finally {
                 alertBox.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'SALVAR NOVO USUÁRIO';
+                btn.textContent = 'SALVAR NOVO PERFIL';
                 setTimeout(() => alertBox.classList.add('hidden'), 4000);
             }
         });
