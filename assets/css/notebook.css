@@ -45,7 +45,7 @@ body.nb-root {
   margin: 0;
   min-height: 100dvh;
   background: var(--bg-outer);
-  color: var(--text-primary);
+  color: var(--bg-page);
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.6;
@@ -54,6 +54,12 @@ body.nb-root {
 
 .nb-wrap { width: min(100% - 3rem, 1280px); margin-inline: auto; }
 .nb-section { padding-block: clamp(4rem, 8vw, 8rem); }
+.nb-on-dark { color: var(--bg-page); }
+.nb-on-dark .nb-muted { color: rgba(248, 246, 241, 0.74); }
+.nb-on-dark .nb-card .nb-muted,
+.nb-on-dark .nb-paper .nb-muted { color: var(--muted-ink); }
+.nb-on-light { color: var(--text-primary); }
+.nb-on-light .nb-eyebrow { color: #3f8f72; }
 .nb-eyebrow {
   margin: 0 0 0.75rem;
   font-family: var(--font-body);
@@ -170,6 +176,7 @@ body.nb-root {
 .nb-paper {
   position: relative;
   background: var(--bg-page);
+  color: var(--text-primary);
   border-radius: var(--radius-sm);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(26, 26, 26, 0.1);
