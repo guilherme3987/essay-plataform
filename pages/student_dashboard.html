@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Aluno - RedaçãoPro</title>
+    <link rel="stylesheet" href="../assets/css/tailwind.css">
+    <script>window.DEMO_ROLE='student';</script>
+    <script src="../demo/seed.js"></script>
+    <script src="../demo/mock-api.js"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+
+    <div id="toast" class="fixed bottom-4 right-4 z-50 max-w-sm px-6 py-4 rounded-xl shadow-2xl text-xs font-bold uppercase tracking-widest border-b-4 hidden transition-opacity duration-300"></div>
+
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center shadow-md">
+                    <span class="text-white font-bold text-sm">R</span>
+                </div>
+                <span class="font-bold text-lg text-slate-900 tracking-tight hidden sm:block">RedaçãoPro</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
+                <button onclick="switchStudentView('list')" class="text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors uppercase tracking-widest">Meus Envios</button>
+                <button onclick="switchStudentView('themes')" class="text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors uppercase tracking-widest">Temas de Redação</button>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse hidden sm:block"></div>
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest"><span data-first-name></span></span>
+                </div>
+                <span class="text-slate-300">|</span>
+                <a href="../api/logout.php" class="text-[10px] font-bold text-slate-500 hover:text-rose-600 transition-colors uppercase tracking-widest">
+                    SAIR DA CONTA
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        
+        <div id="view-list" class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10">
+            <div class="md:col-span-5 lg:col-span-4 space-y-6 sm:space-y-8">
+                <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Painel do Aluno</p>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold leading-tight mb-6 sm:mb-8 truncate">Olá, <span data-first-name></span>.</h2>
+                    <div class="pt-5 sm:pt-6 border-t border-slate-700/50 flex items-center justify-between">
+                        <div>
+                            <p id="corrected-count" class="text-3xl sm:text-4xl font-extrabold leading-none">0</p>
+                            <p class="text-slate-400 text-[9px] uppercase tracking-widest mt-2 font-bold">Corrigidas</p>
+                        </div>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-slate-800 flex items-center justify-center bg-slate-800">
+                            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Nova Submissão</h3>
+                    <p class="text-xs text-slate-500 mb-6 font-medium">Formatos: JPG, PNG ou PDF. Máx 10MB.</p>
+
+                    <form id="upload-form" class="space-y-5 sm:space-y-6">
+                        <div id="drop-zone" class="relative border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 rounded-2xl p-6 sm:p-8 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center min-h-[120px]">
+                            <input type="file" id="file-input" accept=".pdf,image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            <div id="drop-icon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-slate-300 flex items-center justify-center mb-3 sm:mb-4 transition-transform duration-300">
+                                <span class="text-slate-400 text-xl font-light leading-none mb-1">+</span>
+                            </div>
+                            <p id="file-name" class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate w-full text-slate-500">
+                                SELECIONAR OU ARRASTAR
+                            </p>
+                        </div>
+                        <button type="submit" id="btn-submit" disabled class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-3.5 sm:py-4 rounded-xl transition-all duration-200 disabled:opacity-50 text-[10px] sm:text-[11px] uppercase tracking-widest shadow-lg shadow-indigo-600/30">
+                            ENVIAR PARA AVALIAÇÃO
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="md:col-span-7 lg:col-span-8 mt-0">
+                <div class="flex items-center justify-between mb-6 border-b border-slate-200 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900">Histórico de Envios</h2>
+                    <span id="total-count" class="text-[10px] font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-md tracking-widest">0 TOTAL</span>
+                </div>
+                <div id="essays-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <div id="view-themes-list" class="hidden">
+            <div class="mb-8 border-b border-slate-200 pb-6">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Banco de Temas</h2>
+                <p class="text-slate-500 text-sm mt-2 font-medium">Textos de apoio e artigos publicados pelos professores.</p>
+            </div>
+            
+            <div id="themes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </div>
+        
+        <div id="theme-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-sm">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden relative">
+                <button onclick="closeThemeModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold transition-colors">✕</button>
+                <div class="overflow-y-auto p-6 sm:p-10">
+                    <p id="modal-theme-date" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-3">DATA AQUI</p>
+                    <h2 id="modal-theme-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-8">Título</h2>
+                    <img id="modal-theme-img" src="" class="w-full h-auto rounded-2xl mb-8 hidden object-cover" />
+                    <div id="modal-theme-content" class="text-slate-700 leading-relaxed text-sm sm:text-base break-words mb-8"></div>
+                    
+                    <div id="modal-theme-pdf-container" class="hidden border-t border-slate-200 pt-6"></div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="view-mirror" class="hidden">
+            <button id="btn-back" class="mb-6 sm:mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition-all group">
+                <span class="text-lg leading-none group-hover:-translate-x-1 transition-transform">←</span> VOLTAR PARA A LISTA
+            </button>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-2 sm:p-3 overflow-hidden">
+                    <div id="mirror-legends" class="flex flex-wrap gap-1.5 mb-2 px-1"></div>
+                    <div class="w-full overflow-x-auto bg-slate-100/50 rounded-xl">
+                        <div class="relative min-w-[700px] md:min-w-full inline-block">
+                            <img id="mirror-img" src="" alt="Redação" class="w-full h-auto block rounded-xl" />
+                            <svg id="mirror-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+                            <div id="mirror-markers" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Nota Oficial</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="mirror-score" class="text-5xl sm:text-6xl font-extrabold text-slate-900 tracking-tighter">—</span>
+                            <span class="text-slate-400 text-lg sm:text-xl font-bold">/1000</span>
+                        </div>
+                        <div class="mt-4 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div id="mirror-score-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Espelho da Correção</p>
+                        </div>
+                        <div id="mirror-comps" class="p-4 space-y-3"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Parecer Final do Professor</p>
+                        <p id="mirror-feedback" class="text-slate-700 leading-relaxed text-sm font-medium"></p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Detalhamento dos Erros</p>
+                        </div>
+                        <div id="mirror-comments" class="p-4 space-y-4 max-h-[50vh] overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Segurança: token CSRF injetado pelo servidor
+        const CSRF_TOKEN = '';
+
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const originalFetch = window.fetch;
+        window.fetch = function (url, opts = {}) {
+            const method = (opts.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+                if (!opts.headers) opts.headers = {};
+                opts.headers['X-CSRF-Token'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, opts);
+        };
+
+        // MANTENDO A LÓGICA ORIGINAL DO JAVASCRIPT INTACTA
+        const COMPETENCIES = [
+            { id: 1, short: 'C1', title: 'Modalidade Escrita Formal', bg: 'bg-blue-500', light: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', bar: 'bg-blue-500', stroke: 'rgba(59,130,246,0.70)', hex: '#3b82f6' },
+            { id: 2, short: 'C2', title: 'Compreensão do Tema', bg: 'bg-violet-500', light: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', bar: 'bg-violet-500', stroke: 'rgba(139,92,246,0.70)', hex: '#8b5cf6' },
+            { id: 3, short: 'C3', title: 'Seleção e Argumentação', bg: 'bg-emerald-500', light: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', bar: 'bg-emerald-500', stroke: 'rgba(16,185,129,0.70)', hex: '#10b981' },
+            { id: 4, short: 'C4', title: 'Mecanismos Linguísticos', bg: 'bg-amber-500', light: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', bar: 'bg-amber-500', stroke: 'rgba(245,158,11,0.70)', hex: '#f59e0b' },
+            { id: 5, short: 'C5', title: 'Proposta de Intervenção', bg: 'bg-rose-500', light: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700', bar: 'bg-rose-500', stroke: 'rgba(244,63,94,0.70)', hex: '#f43f5e' }
+        ];
+
+        const showToast = (msg, type = 'info') => {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `fixed bottom-4 right-4 z-50 max-w-sm px-6 py-4 rounded-xl shadow-2xl text-xs font-bold uppercase tracking-widest border-b-4 transition-opacity duration-300 ${type === 'success' ? 'bg-emerald-600 text-emerald-50 border-emerald-800' : type === 'error' ? 'bg-rose-600 text-rose-50 border-rose-800' : 'bg-slate-900 text-slate-50 border-black'}`;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 3500);
+        };
+
+        const getStatusUI = (status) => {
+            if(status === 'corrected') return { color: 'border-slate-200 hover:border-indigo-300 hover:shadow-xl cursor-pointer', dot: 'bg-emerald-500', label: 'CORRIGIDA' };
+            if(status === 'in_correction') return { color: 'border-slate-100 opacity-90', dot: 'bg-amber-500 animate-pulse', label: 'EM ANÁLISE' };
+            return { color: 'border-slate-100 opacity-90', dot: 'bg-slate-400', label: 'AGUARDANDO' };
+        };
+
+        let essays = [];
+        let themes = [];
+
+        // --- NOVO: Lógica de Alternância de Tela ---
+        window.switchStudentView = (view) => {
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-mirror').classList.add('hidden');
+            document.getElementById('view-themes-list').classList.add('hidden');
+            
+            if (view === 'list') {
+                document.getElementById('view-list').classList.remove('hidden');
+                loadEssays();
+            } else if (view === 'themes') {
+                document.getElementById('view-themes-list').classList.remove('hidden');
+                loadThemes();
+            }
+        };
+
+        async function loadThemes() {
+            try {
+                const res = await fetch('../api/api_get_themes.php');
+                themes = await res.json();
+                renderThemes();
+            } catch (e) {
+                showToast('Erro ao carregar temas', 'error');
+            }
+        }
+
+        function renderThemes() {
+            const grid = document.getElementById('themes-grid');
+            if(themes.length === 0) {
+                grid.innerHTML = `<div class="col-span-full bg-transparent border-2 border-slate-200 border-dashed rounded-3xl py-16 flex items-center justify-center text-center"><p class="font-bold text-slate-400 text-lg">Nenhum tema publicado ainda.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = themes.map((t, i) => {
+                const date = new Date(t.created_at).toLocaleDateString('pt-BR');
+                const hasImg = t.image_path ? true : false;
+                
+                // Novo: Badge indicando presença de PDF
+                const pdfBadge = t.pdf_path 
+                    ? `<div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-red-600 text-[10px] font-black uppercase tracking-widest"><span class="text-sm">📄</span> MATERIAL DE APOIO PDF</div>` 
+                    : '';
+
+                return `
+                <div onclick="openThemeModal(${i})" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col h-full">
+                    ${hasImg ? `<div class="h-40 bg-slate-100 overflow-hidden"><img src="${esc(assetUrl(t.image_path))}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>` : `<div class="h-2 bg-indigo-500"></div>`}
+                    <div class="p-6 flex flex-col flex-1">
+                        <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">${date}</p>
+                        <h3 class="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors mb-3 line-clamp-2">${esc(t.title)}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-3 mt-auto">${esc(t.content)}</p>
+                        ${pdfBadge}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.openThemeModal = (index) => {
+            const t = themes[index];
+            const date = new Date(t.created_at).toLocaleDateString('pt-BR');
+            
+            document.getElementById('modal-theme-date').textContent = `PUBLICADO EM ${date}`;
+            document.getElementById('modal-theme-title').textContent = t.title;
+            const contentEl = document.getElementById('modal-theme-content');
+            contentEl.textContent = t.content;
+            
+            const imgEl = document.getElementById('modal-theme-img');
+            if (t.image_path) {
+                imgEl.src = assetUrl(t.image_path);
+                imgEl.classList.remove('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+            }
+
+            // NOVO: Adiciona e mostra botão de PDF se existir
+            const pdfContainer = document.getElementById('modal-theme-pdf-container');
+            if (t.pdf_path) {
+                pdfContainer.innerHTML = `
+                    <a href="${esc(assetUrl(t.pdf_path))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-3 px-6 rounded-xl transition-colors duration-200">
+                        <span class="text-xl">📄</span>
+                        <span class="text-xs uppercase tracking-widest">Abrir Material de Apoio (PDF)</span>
+                    </a>
+                `;
+                pdfContainer.classList.remove('hidden');
+            } else {
+                pdfContainer.classList.add('hidden');
+            }
+            
+            document.getElementById('theme-modal').classList.remove('hidden');
+        };
+
+        window.closeThemeModal = () => {
+            document.getElementById('theme-modal').classList.add('hidden');
+        };
+
+
+        async function loadEssays() {
+            try {
+                const res = await fetch('../api/api_get_my_essays.php');
+                essays = await res.json();
+                renderList();
+            } catch (e) {
+                showToast('Erro ao carregar redações', 'error');
+            }
+        }
+
+        function renderList() {
+            const listDiv = document.getElementById('essays-list');
+            document.getElementById('total-count').textContent = `${essays.length} TOTAL`;
+            const correctedCount = essays.filter(e => e.status === 'corrected').length;
+            document.getElementById('corrected-count').textContent = correctedCount;
+
+            if(essays.length === 0) {
+                listDiv.innerHTML = `<div class="bg-transparent border-2 border-slate-200 border-dashed rounded-3xl py-16 sm:py-20 flex items-center justify-center text-center px-4"><div><p class="font-bold text-slate-400 text-lg sm:text-xl">Nenhum envio registrado.</p><p class="text-xs text-slate-400 mt-2 font-medium">Sua primeira redação aparecerá aqui.</p></div></div>`;
+                return;
+            }
+
+            listDiv.innerHTML = essays.map((essay, i) => {
+                const ui = getStatusUI(essay.status);
+                const date = new Date(essay.created_at).toLocaleDateString('pt-BR');
+                return `
+                <div onclick="openMirror(${essay.id})" style="animation-delay: ${i*50}ms" class="group bg-white rounded-2xl border p-5 sm:p-6 transition-all duration-300 ${ui.color}">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="w-2.5 h-2.5 rounded-full ${ui.dot}"></span>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">${ui.label}</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-base sm:text-lg group-hover:text-indigo-600 transition-colors">Redação de ${date}</h3>
+                            <p class="text-[10px] text-slate-400 mt-1.5 font-mono uppercase tracking-widest">Cód. Submissão: ${essay.id}</p>
+                        </div>
+                        ${essay.status === 'corrected' ? `<div class="text-[10px] font-bold uppercase tracking-widest text-indigo-600 sm:opacity-0 transform sm:translate-x-4 sm:group-hover:opacity-100 sm:group-hover:translate-x-0 transition-all duration-300 flex items-center gap-2 bg-indigo-50 sm:bg-transparent px-4 py-2.5 sm:p-0 rounded-lg">VER ESPELHO <span class="text-sm font-light">→</span></div>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const fileName = document.getElementById('file-name');
+        const btnSubmit = document.getElementById('btn-submit');
+        const uploadForm = document.getElementById('upload-form');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                fileName.textContent = file.name;
+                fileName.classList.replace('text-slate-500', 'text-indigo-700');
+                dropZone.classList.add('border-indigo-600', 'bg-indigo-50/50');
+                btnSubmit.disabled = false;
+            }
+        });
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            if(!file) return;
+
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'PROCESSANDO...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const res = await fetch('../api/api_upload_essay.php', { method: 'POST', body: formData }); 
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error || 'Erro desconhecido no servidor');
+
+                showToast('REDAÇÃO ENVIADA COM SUCESSO', 'success');
+                uploadForm.reset();
+                fileName.textContent = 'SELECIONAR OU ARRASTAR';
+                fileName.classList.replace('text-indigo-700', 'text-slate-500');
+                dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+                loadEssays();
+            } catch (error) {
+                showToast(error.message || 'FALHA NO ENVIO', 'error');
+                console.error("Erro detalhado:", error);
+            } finally {
+                btnSubmit.textContent = 'ENVIAR PARA AVALIAÇÃO';
+                btnSubmit.disabled = false;
+            }
+        });
+
+        window.openMirror = (id) => {
+            const essay = essays.find(e => e.id === id);
+            if(essay.status !== 'corrected') return;
+
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-mirror').classList.remove('hidden');
+
+            document.getElementById('mirror-img').src = assetUrl(essay.file_path);
+            const score = essay.correction?.score ?? 0;
+            document.getElementById('mirror-score').textContent = score;
+            document.getElementById('mirror-score-bar').style.width = `${(score/1000)*100}%`;
+            document.getElementById('mirror-feedback').textContent = essay.correction?.general_feedback || 'Sem parecer final.';
+
+            document.getElementById('mirror-legends').innerHTML = COMPETENCIES.map(c => `<div class="flex items-center gap-1 px-2 py-0.5 rounded-md ${c.light} border ${c.border}"><span class="w-2.5 h-2.5 rounded-full ${c.bg}"></span><span class="text-[9px] font-bold ${c.text}">${c.short}</span></div>`).join('');
+
+            const scores = { 1: essay.correction.comp1_score, 2: essay.correction.comp2_score, 3: essay.correction.comp3_score, 4: essay.correction.comp4_score, 5: essay.correction.comp5_score };
+            document.getElementById('mirror-comps').innerHTML = COMPETENCIES.map(c => {
+                const s = scores[c.id] || 0;
+                const level = Math.round(s/40);
+                return `<div class="${c.light} border ${c.border} rounded-xl p-4"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2 min-w-0"><span class="w-7 h-7 rounded-full ${c.bg} flex items-center justify-center text-white text-[10px] font-black flex-shrink-0">${c.short}</span><div><p class="text-[11px] font-bold ${c.text} truncate">${c.title}</p><p class="text-[10px] text-slate-400 font-medium">Nível ${level} de 5</p></div></div><div class="text-right flex-shrink-0 ml-2"><span class="text-xl font-black ${c.text}">${s}</span><span class="text-xs text-slate-400">/200</span></div></div><div class="h-1.5 bg-white/70 rounded-full overflow-hidden mt-2"><div class="h-full ${c.bar} rounded-full transition-all duration-700" style="width: ${(s/200)*100}%"></div></div></div>`;
+            }).join('');
+
+            const svg = document.getElementById('mirror-svg');
+            const markers = document.getElementById('mirror-markers');
+            const commentsList = document.getElementById('mirror-comments');
+            svg.innerHTML = ''; markers.innerHTML = ''; commentsList.innerHTML = '';
+
+            const comments = essay.correction?.comments || [];
+            
+            let groupedComments = '';
+            COMPETENCIES.forEach(comp => {
+                const compComments = comments.filter(c => c.competency === comp.id);
+                if(compComments.length === 0) return;
+                
+                groupedComments += `<div class="mb-4"><div class="flex items-center gap-2 mb-2 px-1"><span class="w-5 h-5 rounded-full ${comp.bg} flex items-center justify-center text-white text-[9px] font-black">${comp.short}</span><span class="text-[10px] font-bold ${comp.text} uppercase tracking-wide">${comp.title}</span></div>`;
+                
+                compComments.forEach(c => {
+                    const globalIdx = comments.indexOf(c) + 1;
+                    groupedComments += `<div class="flex gap-3 p-3 mb-1 ${comp.light} border ${comp.border} rounded-xl"><span class="flex-shrink-0 w-5 h-5 ${comp.bg} text-white font-bold rounded-full flex items-center justify-center text-[9px]">${globalIdx}</span><p class="text-slate-700 text-sm leading-relaxed">${esc(c.comment)}</p></div>`;
+                    
+                    if(c.excerpt) {
+                        const pts = JSON.parse(c.excerpt);
+                        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                        poly.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
+                        poly.setAttribute('fill', 'none'); poly.setAttribute('stroke', comp.stroke); poly.setAttribute('stroke-width', '1.5'); poly.setAttribute('stroke-linecap', 'round'); poly.setAttribute('stroke-linejoin', 'round'); poly.setAttribute('vector-effect', 'non-scaling-stroke');
+                        svg.appendChild(poly);
+                    }
+                    
+                    const marker = document.createElement('div');
+                    marker.className = `absolute w-7 h-7 text-white rounded-full flex items-center justify-center text-[11px] font-black shadow-lg transform -translate-x-1/2 -translate-y-1/2 cursor-help ring-4 ring-white/80 hover:scale-125 hover:z-30 transition-all duration-200 pointer-events-auto`;
+                    marker.style.left = `${c.x_pos}%`; marker.style.top = `${c.y_pos}%`; marker.style.backgroundColor = comp.hex;
+                    marker.title = `${comp.short}: ${c.comment}`; marker.textContent = globalIdx;
+                    markers.appendChild(marker);
+                });
+                groupedComments += `</div>`;
+            });
+            commentsList.innerHTML = groupedComments;
+        };
+
+        document.getElementById('btn-back').addEventListener('click', () => {
+            document.getElementById('view-mirror').classList.add('hidden');
+            document.getElementById('view-list').classList.remove('hidden');
+        });
+
+        loadEssays();
+    </script>
+</body>
+</html>
